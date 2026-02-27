@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solar Vibe Tracker 2.2 - Fix</title>
+    <title>Solar Vibe Tracker 2.3</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
@@ -52,10 +52,10 @@
             background: #1e293b;
             border: 1px solid #334155;
             color: white;
-            padding: 10px;
+            padding: 12px;
             border-radius: 10px;
             font-family: inherit;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             outline: none;
             width: 100%;
         }
@@ -69,51 +69,3 @@
             text-align: center;
         }
         .val { font-size: 1rem; font-weight: bold; color: #fbbf24; display: block; }
-        
-        .gps-btn {
-            width: 100%;
-            padding: 10px;
-            background: rgba(56, 189, 248, 0.1);
-            color: #38bdf8;
-            border: 1px solid #38bdf8;
-            border-radius: 10px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 5px;
-            transition: 0.3s;
-        }
-        .gps-btn:hover { background: #38bdf8; color: #0f172a; }
-        .night { filter: grayscale(1) brightness(0.4); opacity: 0.3; }
-    </style>
-</head>
-<body>
-
-<div class="card">
-    <div style="font-size: 0.7rem; letter-spacing: 3px; opacity: 0.5; margin-bottom: 15px;">SOLAR COMMAND CENTER</div>
-    
-    <div class="sun-display" id="sun-icon"></div>
-
-    <div class="section">
-        <span class="label">Simulazione Temporale</span>
-        <div class="input-group">
-            <input type="date" id="input-date">
-            <input type="time" id="input-time">
-        </div>
-    </div>
-
-    <div class="section">
-        <span class="label">Coordinate Geografiche</span>
-        <div class="input-group">
-            <input type="number" id="lat-input" step="0.0001" placeholder="Lat">
-            <input type="number" id="lon-input" step="0.0001" placeholder="Lon">
-        </div>
-        <button class="gps-btn" id="gps-trigger">USA POSIZIONE ATTUALE (GPS)</button>
-    </div>
-
-    <div class="data-grid">
-        <div class="data-item">
-            <span class="label">Resa Stimata</span>
-            <span id="yield" class="val">--</span>
-        </div>
-        <div class="data-item">
