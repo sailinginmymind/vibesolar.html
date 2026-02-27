@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vibe Solar - Pro Radar HD</title>
+    <title>Vibe Solar - Pro Radar XL</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
             margin: 0; background-color: #0f172a; color: white; font-family: sans-serif;
             display: flex; justify-content: center; min-height: 100vh; padding-bottom: 100px;
         }
-        .app-container { width: 100%; max-width: 500px; padding: 15px; }
+        .app-container { width: 100%; max-width: 500px; padding: 10px; }
         .view { display: none; animation: fadeIn 0.3s ease; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -20,21 +20,21 @@
         .card { background: #1e293b; border-radius: 24px; padding: 25px; border: 1px solid #334155; margin-bottom: 15px; position: relative; }
         .section-title { font-size: 12px; color: #94a3b8; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 12px; letter-spacing: 1px; }
         
-        .btn-sync { padding: 16px; background: #fbbf24; color: #0f172a; border: none; border-radius: 14px; font-weight: 900; cursor: pointer; font-size: 14px; width: 100%; margin-bottom: 20px; text-transform: uppercase; }
+        .btn-sync { padding: 18px; background: #fbbf24; color: #0f172a; border: none; border-radius: 14px; font-weight: 900; cursor: pointer; font-size: 14px; width: 100%; margin-bottom: 20px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.2); }
 
-        /* RADAR SYSTEM - BIG EDITION */
+        /* RADAR SYSTEM - CELESTIAL XL */
         .radar-container {
             position: relative; width: 320px; height: 320px; margin: 15px auto;
             display: flex; align-items: center; justify-content: center;
         }
         
         .sky-orbit {
-            position: absolute; width: 240px; height: 240px; border-radius: 50%;
-            border: 2px solid rgba(56, 189, 248, 0.2);
+            position: absolute; width: 250px; height: 250px; border-radius: 50%;
+            border: 2px solid rgba(56, 189, 248, 0.15);
         }
 
         .horizon-line {
-            position: absolute; width: 280px; height: 2px;
+            position: absolute; width: 290px; height: 2px;
             background: linear-gradient(90deg, transparent, #fbbf24, transparent);
             top: 50%; left: 50%; transform: translate(-50%, -50%);
             z-index: 1;
@@ -44,13 +44,14 @@
             top: -15px; text-transform: uppercase;
         }
 
+        /* SOLE E LUNA PIÙ GRANDI */
         #celestial-body {
-            position: absolute; width: 32px; height: 32px; 
+            position: absolute; width: 40px; height: 40px; 
             display: flex; align-items: center; justify-content: center;
-            border-radius: 50%; top: -16px; left: 50%; 
-            transform-origin: center 120px;
+            border-radius: 50%; top: -20px; left: 50%; 
+            transform-origin: center 125px;
             z-index: 10; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            font-size: 24px;
+            font-size: 32px; /* Ingrandito */
         }
 
         .radar-circle {
@@ -61,19 +62,24 @@
             z-index: 2; transition: all 1s ease;
         }
 
-        /* COORDINATE ORE 12, 16, 20 - LARGE */
+        /* COORDINATE ORE 12, 16, 20 */
         .radar-info { position: absolute; color: #94a3b8; font-weight: bold; text-align: center; width: 100px; z-index: 3; }
-        .pos-12 { top: -20px; left: 50%; transform: translateX(-50%); } 
-        .pos-16 { bottom: 20px; right: -15px; }
-        .pos-20 { bottom: 20px; left: -15px; }
+        .pos-12 { top: -25px; left: 50%; transform: translateX(-50%); } 
+        .pos-16 { bottom: 15px; right: -20px; }
+        .pos-20 { bottom: 15px; left: -20px; }
 
         .radar-label { font-size: 11px; letter-spacing: 1px; color: #38bdf8; display: block; margin-bottom: 2px; }
-        .radar-val { display: block; color: white; font-size: 26px; font-weight: 900; line-height: 1; }
-        .unit { font-size: 12px; color: #94a3b8; margin-left: 2px; }
+        .radar-val { display: block; color: white; font-size: 28px; font-weight: 900; line-height: 1; }
+        .unit { font-size: 12px; color: #94a3b8; margin-left: 2px; font-weight: 400; }
 
-        .big-w { font-size: 54px; color: #38bdf8; font-weight: 900; margin: 5px 0; display: block; text-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
-        input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 16px; font-weight: bold; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .big-w { font-size: 56px; color: #38bdf8; font-weight: 900; margin: 5px 0; display: block; text-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
+
+        /* FIX INPUT DATA E ORA */
+        .input-group { display: flex; gap: 10px; width: 100%; margin-bottom: 12px; flex-wrap: nowrap; }
+        .input-group input { flex: 1; min-width: 0; } /* min-width: 0 impedisce l'overflow */
+        
+        input { padding: 14px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 15px; font-weight: bold; width: 100%; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
         .navbar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; height: 80px; background: #1e293b; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #334155; z-index: 1000; }
         .nav-item { color: #94a3b8; font-size: 11px; font-weight: 900; cursor: pointer; text-align: center; flex: 1; }
@@ -105,16 +111,15 @@
                 </div>
                 
                 <div class="sky-orbit"><div id="celestial-body">☀️</div></div>
-                
                 <div class="horizon-line">
                     <span class="horizon-label" style="left:0">ALBA</span>
                     <span class="horizon-label" style="right:0">TRAMONTO</span>
                 </div>
 
                 <div id="radar-center" class="radar-circle">
-                    <span id="r-icon-center" style="font-size:50px">☀️</span>
-                    <span id="r-cloud-percent" style="font-size: 16px; color: white; font-weight: 900; margin-top:5px;">--%</span>
-                    <span class="radar-label" style="font-size: 9px;">COPERTURA NUBI</span>
+                    <span id="r-icon-center" style="font-size:55px">☀️</span>
+                    <span id="r-cloud-percent" style="font-size: 18px; color: white; font-weight: 900; margin-top:5px;">--%</span>
+                    <span class="radar-label" style="font-size: 8px;">NUBI</span>
                 </div>
             </div>
 
@@ -126,26 +131,28 @@
         </div>
 
         <div class="card">
-            <span class="section-title">Geolocalizzazione e Ora</span>
-            <div class="grid-2" style="margin-bottom:12px;">
-                <input type="date" id="d_val"><input type="time" id="t_val">
+            <span class="section-title">Parametri Temporali</span>
+            <div class="input-group">
+                <input type="date" id="d_val">
+                <input type="time" id="t_val">
             </div>
             <div class="grid-2">
-                <input type="number" id="la_val" step="0.0001" placeholder="Lat"><input type="number" id="lo_val" step="0.0001" placeholder="Lon">
+                <input type="number" id="la_val" step="0.0001" placeholder="Lat">
+                <input type="number" id="lo_val" step="0.0001" placeholder="Lon">
             </div>
         </div>
     </div>
 
     <div id="view-energy" class="view">
         <div class="card">
-            <span class="section-title">Configurazione Impianto</span>
+            <span class="section-title">Setup Camper</span>
             <div class="grid-2">
                 <div><label class="section-title">Watt (Wp)</label><input type="number" id="p_watt" value="100"></div>
                 <div><label class="section-title">Tilt <b id="tilt_txt" style="color:#38bdf8">0°</b></label><input type="range" id="tilt_range" min="0" max="90" value="0"></div>
             </div>
         </div>
         <div class="card" style="text-align: center;">
-            <span class="section-title">Produzione Giornaliera Stimata</span>
+            <span class="section-title">Resa Stimata</span>
             <span style="font-size: 48px; color: #fbbf24; font-weight: 900;" id="daily_wh">0 Wh</span>
             <div style="font-size:22px; color:#38bdf8; font-weight:900">≈ <span id="daily_ah">0</span> Ah</div>
             <div id="chart" style="display:flex; align-items:flex-end; justify-content:space-between; height:120px; margin-top:30px; border-bottom:2px solid #334155"></div>
@@ -164,7 +171,7 @@
 
     async function fullSync() {
         const btn = document.getElementById('main-sync');
-        btn.innerText = "📡 ANALISI IN CORSO...";
+        btn.innerText = "📡 ANALISI...";
         const n = new Date();
         document.getElementById('d_val').value = n.toISOString().split('T')[0];
         document.getElementById('t_val').value = n.toTimeString().slice(0,5);
@@ -177,25 +184,22 @@
                     const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,cloud_cover,wind_speed_10m&daily=sunrise,sunset&timezone=auto`);
                     const d = await r.json();
                     if (d.current) {
-                        // Aggiornamento Valori Grandi
                         document.getElementById('r-temp').innerHTML = Math.round(d.current.temperature_2m) + '<span class="unit">°C</span>';
                         document.getElementById('r-hum').innerHTML = d.current.relative_humidity_2m + '<span class="unit">%</span>';
                         document.getElementById('r-wind').innerHTML = Math.round(d.current.wind_speed_10m) + '<span class="unit">km/h</span>';
-                        
                         document.getElementById('sunrise-txt').innerText = d.daily.sunrise[0].split('T')[1];
                         document.getElementById('sunset-txt').innerText = d.daily.sunset[0].split('T')[1];
-                        
                         cloudCoverVal = d.current.cloud_cover;
                         document.getElementById('r-cloud-percent').innerText = cloudCoverVal + "%";
-                        
-                        // Gradiente dinamico per il centro
                         document.getElementById('radar-center').style.background = `radial-gradient(circle, #1e293b 0%, #0f172a ${cloudCoverVal}%)`;
-                        
                         weatherFactor = Math.max(0.15, (100 - (cloudCoverVal * 0.85)) / 100);
+                        
+                        // FEEDBACK APTICO (VIBRAZIONE)
+                        if ("vibrate" in navigator) navigator.vibrate(50);
                     }
                 } catch(e) {}
                 update();
-                btn.innerText = "✅ SISTEMA AGGIORNATO";
+                btn.innerText = "✅ AGGIORNATO";
                 setTimeout(() => btn.innerText = "⚡ SINCRONIZZA RADAR", 2000);
             });
         }
@@ -235,18 +239,19 @@
 
         if (sAltDeg > 0) {
             celestial.innerText = "☀️";
+            celestial.style.filter = "drop-shadow(0 0 10px #fbbf24)";
             document.getElementById('r-icon-center').innerText = (cloudCoverVal > 30) ? "⛅" : "☀️";
             const yield = Math.max(0, Math.cos((Math.PI/2) - sAltRad - (tilt * Math.PI/180))) * weatherFactor;
             document.getElementById('w_out').innerText = Math.round(pWatt * yield) + " W";
             document.getElementById('w_out').style.color = "#38bdf8";
         } else {
             celestial.innerText = "🌙";
+            celestial.style.filter = "drop-shadow(0 0 10px #94a3b8)";
             document.getElementById('r-icon-center').innerText = "🌙";
             document.getElementById('w_out').innerText = "0 W";
             document.getElementById('w_out').style.color = "#475569";
         }
 
-        // Report
         const chart = document.getElementById('chart'); chart.innerHTML = "";
         let totalWh = 0;
         for (let i = 6; i <= 21; i++) {
