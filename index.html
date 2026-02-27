@@ -3,146 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vibe Solar</title>
+    <title>Vibe Solar App</title>
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
-            margin: 0; 
-            background-color: #0f172a; 
-            color: white; 
-            font-family: sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh;
-            padding: 10px;
+            margin: 0; background-color: #0f172a; color: white; font-family: sans-serif;
+            display: flex; justify-content: center; min-height: 100vh; padding-bottom: 70px;
         }
         
-        .box { 
-            width: 100%; 
-            max-width: 500px; 
-            padding: 20px; 
-            background: #1e293b; 
-            border-radius: 20px; 
-            text-align: center; 
-            border: 1px solid #334155;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
+        /* CONTENITORE PRINCIPALE */
+        .app-container { width: 100%; max-width: 500px; padding: 20px; }
+        .view { display: none; animation: fadeIn 0.3s ease; }
+        .view.active { display: block; }
 
-        /* --- ARCO SOLARE --- */
-        .sky-container {
-            width: 100%;
-            height: 90px;
-            position: relative;
-            margin-bottom: 5px;
-            border-bottom: 2px solid #334155;
-            overflow: hidden;
-        }
-        .sun-arc {
-            width: 200px;
-            height: 200px;
-            border: 2px dashed rgba(251, 191, 36, 0.2);
-            border-radius: 50%;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            top: 15px;
-        }
-        #sun-dot {
-            width: 20px;
-            height: 20px;
-            background: #fbbf24;
-            border-radius: 50%;
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform-origin: center 100px;
-            box-shadow: 0 0 15px #fbbf24;
-            transition: transform 0.3s ease;
-        }
-        .sun-times { display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8; margin-bottom: 15px; font-weight: bold; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- INPUT --- */
-        .section { margin-bottom: 15px; text-align: left; }
-        .title-sm { font-size: 12px; color: #94a3b8; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 6px; }
-        .input-label { font-size: 11px; color: #cbd5e1; margin-bottom: 4px; display: block; }
+        /* HEADER & TITOLO */
+        h2 { margin: 0 0 15px 0; letter-spacing: 2px; color: #38bdf8; text-align: center; }
+
+        /* NAVIGAZIONE IN BASSO */
+        .navbar {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 500px; height: 65px;
+            background: #1e293b; border-top: 1px solid #334155;
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 1000;
+        }
+        .nav-item { 
+            color: #94a3b8; font-size: 11px; font-weight: bold; 
+            text-transform: uppercase; cursor: pointer; text-align: center;
+        }
+        .nav-item.active { color: #38bdf8; }
+        .nav-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+
+        /* CARDS & STILI COMUNI */
+        .card { 
+            background: #1e293b; border-radius: 20px; padding: 20px; 
+            border: 1px solid #334155; margin-bottom: 15px; 
+        }
+        .section-title { font-size: 12px; color: #94a3b8; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 10px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        
         input { 
-            width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #334155; 
+            width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #334155; 
             background: #0f172a; color: white; font-size: 16px; 
         }
-        input[type="range"] { accent-color: #38bdf8; margin: 8px 0; height: 6px; cursor: pointer; }
-
         .btn { 
             width: 100%; padding: 12px; background: #38bdf8; color: #0f172a; border: none; 
-            border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 5px; font-size: 12px;
+            border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 5px;
         }
 
-        /* --- RISULTATI --- */
-        .res-container { 
-            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; 
-            margin-top: 15px; padding-top: 15px; border-top: 1px solid #334155; 
-        }
-        .res-box { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; }
-        .res-val { font-size: 18px; color: #fbbf24; font-weight: bold; display: block; }
-        .watt-main { grid-column: span 3; background: rgba(56, 189, 248, 0.1); border: 1px solid #38bdf8; padding: 15px; }
-        .highlight { color: #38bdf8; }
+        /* LIVE VIEW SPECIFIC */
+        .sky-container { width: 100%; height: 80px; position: relative; border-bottom: 1px solid #334155; overflow: hidden; margin-bottom: 10px; }
+        .sun-arc { width: 180px; height: 180px; border: 1px dashed rgba(251, 191, 36, 0.3); border-radius: 50%; position: absolute; left: 50%; transform: translateX(-50%); top: 15px; }
+        #sun-dot { width: 18px; height: 18px; background: #fbbf24; border-radius: 50%; position: absolute; top: -9px; left: 50%; transform-origin: center 90px; box-shadow: 0 0 10px #fbbf24; }
+        
+        /* ENERGY VIEW SPECIFIC */
+        .big-res { font-size: 40px; color: #fbbf24; font-weight: bold; display: block; margin: 10px 0; }
+        .sub-res { font-size: 18px; color: #38bdf8; }
     </style>
 </head>
 <body>
 
-<div class="box">
-    <h2 style="margin: 0 0 5px 0; letter-spacing: 2px; color: #38bdf8; font-size: 1.6rem;">VIBE SOLAR</h2>
+<div class="app-container">
+    <h2>VIBE SOLAR</h2>
 
-    <div class="sky-container">
-        <div class="sun-arc"><div id="sun-dot"></div></div>
-    </div>
-    <div class="sun-times">
-        <span>ALBA: <span id="sunrise-t">--:--</span></span>
-        <span>TRAMONTO: <span id="sunset-t">--:--</span></span>
-    </div>
-
-    <div class="section" style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
-        <div class="grid-2">
-            <div>
-                <span class="input-label">Watt Totali (Wp)</span>
-                <input type="number" id="p_watt" value="100" step="10">
-            </div>
-            <div>
-                <span class="input-label">Inclinazione (Tilt) <b id="tilt_display" class="highlight">0°</b></span>
-                <input type="range" id="tilt_range" min="0" max="90" value="0">
+    <div id="view-live" class="view active">
+        <div class="card">
+            <div class="sky-container"><div class="sun-arc"><div id="sun-dot"></div></div></div>
+            <div style="display:flex; justify-content: space-between; font-size: 10px; color:#94a3b8;">
+                <span>ALBA: <b id="sunrise-t">--:--</b></span>
+                <span>TRAMONTO: <b id="sunset-t">--:--</b></span>
             </div>
         </div>
-    </div>
 
-    <div class="section">
-        <div class="grid-2">
-            <div><span class="input-label">Data</span><input type="date" id="d_val"></div>
-            <div><span class="input-label">Ora Locale</span><input type="time" id="t_val"></div>
+        <div class="card">
+            <span class="section-title">Produzione Istantanea</span>
+            <div style="text-align: center; padding: 10px;">
+                <span id="w_out" style="font-size: 48px; color: #38bdf8; font-weight: bold;">0 W</span>
+                <div class="grid-2" style="margin-top:15px; border-top: 1px solid #334155; padding-top:15px;">
+                    <div><small class="section-title">Resa</small><b id="y_out">--</b></div>
+                    <div><small class="section-title">Sole</small><b id="a_out">--</b></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <span class="section-title">Impostazioni Veloci</span>
+            <div class="grid-2">
+                <div><input type="date" id="d_val"></div>
+                <div><input type="time" id="t_val"></div>
+            </div>
+            <button class="btn" style="margin-top:10px" onclick="askGPS()">📍 AGGIORNA POSIZIONE GPS</button>
         </div>
     </div>
 
-    <div class="section">
-        <div class="grid-2">
-            <div><span class="input-label">Latitudine</span><input type="number" id="la_val" step="0.0001"></div>
-            <div><span class="input-label">Longitudine</span><input type="number" id="lo_val" step="0.0001"></div>
+    <div id="view-energy" class="view">
+        <div class="card" style="text-align: center;">
+            <span class="section-title">Stima Energetica Giornaliera</span>
+            <span class="big-res" id="daily_wh">0 Wh</span>
+            <span class="sub-res">≈ <span id="daily_ah">0</span> Ah (a 12V)</span>
+            <p style="font-size: 12px; color: #94a3b8; margin-top: 15px;">
+                Basato sulla data e posizione selezionata, calcolato dall'alba al tramonto.
+            </p>
         </div>
-        <button class="btn" onclick="askGPS()">📍 AGGIORNA POSIZIONE GPS</button>
+
+        <div class="card">
+            <span class="section-title">Parametri Impianto</span>
+            <div class="grid-2">
+                <div>
+                    <label class="section-title" style="font-size:10px">Watt Pannelli</label>
+                    <input type="number" id="p_watt" value="100">
+                </div>
+                <div>
+                    <label class="section-title" style="font-size:10px">Inclinazione (Tilt)</label>
+                    <input type="number" id="tilt_val" value="0" min="0" max="90">
+                </div>
+            </div>
+            <input type="range" id="tilt_range" min="0" max="90" value="0" style="margin-top:10px">
+        </div>
+        
+        <input type="hidden" id="la_val" value="41.8902">
+        <input type="hidden" id="lo_val" value="12.4922">
     </div>
 
-    <div class="res-container">
-        <div class="res-box watt-main">
-            <span class="title-sm" style="color:#cbd5e1">Potenza Stimata</span>
-            <span class="res-val" id="w_out" style="font-size: 36px; color: #38bdf8;">0 W</span>
+    <div class="navbar">
+        <div class="nav-item active" onclick="switchView('live', this)">
+            <span class="nav-icon">☀️</span>LIVE
         </div>
-        <div class="res-box"><span class="title-sm">Resa</span><span class="res-val" id="y_out">--</span></div>
-        <div class="res-box"><span class="title-sm">Sole</span><span class="res-val" id="a_out">--</span></div>
-        <div class="res-box"><span class="title-sm">Inclin.</span><span class="res-val" id="tilt_out">0°</span></div>
+        <div class="nav-item" onclick="switchView('energy', this)">
+            <span class="nav-icon">🔋</span>ENERGY
+        </div>
     </div>
 </div>
 
 <script>
+    // --- NAVIGAZIONE ---
+    function switchView(viewId, el) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.getElementById('view-' + viewId).classList.add('active');
+        el.classList.add('active');
+        update(); // Ricalcola tutto al cambio vista
+    }
+
+    // --- LOGICA DI CALCOLO ---
     function update() {
         const dv = document.getElementById('d_val').value;
         const tv = document.getElementById('t_val').value;
@@ -150,77 +154,84 @@
         const lon = parseFloat(document.getElementById('lo_val').value);
         const pWatt = parseFloat(document.getElementById('p_watt').value) || 0;
         const tilt = parseFloat(document.getElementById('tilt_range').value);
-
-        document.getElementById('tilt_display').innerText = tilt + "°";
-        document.getElementById('tilt_out').innerText = tilt + "°";
+        
+        document.getElementById('tilt_val').value = tilt;
 
         if (!dv || !tv || isNaN(lat) || isNaN(lon)) return;
 
-        const dt = new Date(dv + 'T' + tv);
-        const day = Math.floor((dt - new Date(dt.getFullYear(), 0, 0)) / 86400000);
-        const decl = 0.409 * Math.sin((2 * Math.PI / 365) * (day - 81));
-        const off = dt.getTimezoneOffset() / -60;
-        const sol = (dt.getHours() + dt.getMinutes() / 60) + (4 * lon - 60 * off) / 60;
-        const ha = (sol - 12) * 15 * (Math.PI / 180);
-        const lr = lat * (Math.PI / 180);
+        // Funzione base altezza sole
+        function getSunAlt(dateObj) {
+            const day = Math.floor((dateObj - new Date(dateObj.getFullYear(), 0, 0)) / 86400000);
+            const decl = 0.409 * Math.sin((2 * Math.PI / 365) * (day - 81));
+            const off = dateObj.getTimezoneOffset() / -60;
+            const sol = (dateObj.getHours() + dateObj.getMinutes() / 60) + (4 * lon - 60 * off) / 60;
+            const ha = (sol - 12) * 15 * (Math.PI / 180);
+            const lr = lat * (Math.PI / 180);
+            const sa = Math.sin(lr) * Math.sin(decl) + Math.cos(lr) * Math.cos(decl) * Math.cos(ha);
+            return Math.asin(sa);
+        }
 
-        const sa = Math.sin(lr) * Math.sin(decl) + Math.cos(lr) * Math.cos(decl) * Math.cos(ha);
-        const sunAltRad = Math.asin(sa);
+        const now = new Date(dv + 'T' + tv);
+        const sunAltRad = getSunAlt(now);
         const sunAltDeg = sunAltRad * (180 / Math.PI);
 
-        // Alba/Tramonto
-        const cosH = -Math.tan(lr) * Math.tan(decl);
-        let sunrise, sunset;
-        if (cosH > 1) { sunrise = sunset = null; }
-        else if (cosH < -1) { sunrise = 0; sunset = 24; }
-        else {
-            const h = Math.acos(cosH) * (180 / Math.PI) / 15;
-            const meanNoon = 12 - (4 * lon - 60 * off) / 60;
-            sunrise = meanNoon - h;
-            sunset = meanNoon + h;
+        // Calcolo Alba/Tramonto per UI
+        const decl = 0.409 * Math.sin((Math.floor((now - new Date(now.getFullYear(),0,0))/86400000) - 81) * 2 * Math.PI/365);
+        const cosH = -Math.tan(lat * Math.PI/180) * Math.tan(decl);
+        let sunriseH = 6, sunsetH = 18;
+        if (cosH >= -1 && cosH <= 1) {
+            const h = Math.acos(cosH) * (180/Math.PI) / 15;
+            const meanNoon = 12 - (4 * lon - 60 * (now.getTimezoneOffset()/-60)) / 60;
+            sunriseH = meanNoon - h;
+            sunsetH = meanNoon + h;
         }
 
-        const formatTime = h => {
-            if (h === null) return "--:--";
-            const hh = Math.floor(h);
-            const mm = Math.floor((h - hh) * 60);
-            return `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
-        };
-        document.getElementById('sunrise-t').innerText = formatTime(sunrise);
-        document.getElementById('sunset-t').innerText = formatTime(sunset);
+        // --- UPDATE LIVE VIEW ---
+        const formatTime = h => `${String(Math.floor(h)).padStart(2,'0')}:${String(Math.floor((h%1)*60)).padStart(2,'0')}`;
+        document.getElementById('sunrise-t').innerText = formatTime(sunriseH);
+        document.getElementById('sunset-t').innerText = formatTime(sunsetH);
 
-        const sunDot = document.getElementById('sun-dot');
         if (sunAltDeg > 0) {
-            const progress = (sol - sunrise) / (sunset - sunrise);
-            const angle = (progress * 180) - 90;
-            sunDot.style.transform = `translateX(-50%) rotate(${angle}deg)`;
-            sunDot.style.opacity = "1";
-            
-            // CALCOLO RESA CON TILT
             const tiltRad = tilt * (Math.PI / 180);
-            const incidence = Math.cos((Math.PI/2) - sunAltRad - tiltRad);
-            const yield = Math.round(Math.max(0, incidence) * 100);
-            
-            const totalWatts = Math.round(pWatt * (yield / 100));
-
+            const yield = Math.cos((Math.PI/2) - sunAltRad - tiltRad);
+            const currentYield = Math.round(Math.max(0, yield) * 100);
+            document.getElementById('w_out').innerText = Math.round(pWatt * (currentYield/100)) + " W";
+            document.getElementById('y_out').innerText = currentYield + "%";
             document.getElementById('a_out').innerText = Math.round(sunAltDeg) + "°";
-            document.getElementById('y_out').innerText = yield + "%";
-            document.getElementById('w_out').innerText = totalWatts + " W";
+            
+            // Animazione Arco
+            const solNow = (now.getHours() + now.getMinutes() / 60) + (4 * lon - 60 * (now.getTimezoneOffset()/-60)) / 60;
+            const progress = (solNow - sunriseH) / (sunsetH - sunriseH);
+            document.getElementById('sun-dot').style.transform = `translateX(-50%) rotate(${(progress * 180) - 90}deg)`;
+            document.getElementById('sun-dot').style.opacity = "1";
         } else {
-            sunDot.style.opacity = "0";
-            document.getElementById('a_out').innerText = "NOTTE";
-            document.getElementById('y_out').innerText = "0%";
             document.getElementById('w_out').innerText = "0 W";
+            document.getElementById('y_out').innerText = "0%";
+            document.getElementById('a_out').innerText = "NOTTE";
+            document.getElementById('sun-dot').style.opacity = "0";
         }
+
+        // --- UPDATE ENERGY VIEW (Integrazione Giornaliera) ---
+        let totalWh = 0;
+        // Simuliamo ogni 15 minuti dall'alba al tramonto
+        for (let h = sunriseH; h <= sunsetH; h += 0.25) {
+            const simDate = new Date(now);
+            simDate.setHours(Math.floor(h), (h % 1) * 60);
+            const sAlt = getSunAlt(simDate);
+            if (sAlt > 0) {
+                const sYield = Math.cos((Math.PI/2) - sAlt - (tilt * Math.PI/180));
+                totalWh += (pWatt * Math.max(0, sYield)) * 0.25; // 0.25 perché è un quarto d'ora
+            }
+        }
+        document.getElementById('daily_wh').innerText = Math.round(totalWh) + " Wh";
+        document.getElementById('daily_ah').innerText = Math.round(totalWh / 12);
     }
 
     function askGPS() {
         if (navigator.geolocation) {
-            document.getElementById('gps_status').innerText = "...";
             navigator.geolocation.getCurrentPosition(p => {
                 document.getElementById('la_val').value = p.coords.latitude.toFixed(4);
                 document.getElementById('lo_val').value = p.coords.longitude.toFixed(4);
-                document.getElementById('gps_status').innerText = "(OK)";
                 update();
             });
         }
@@ -230,9 +241,7 @@
         const n = new Date();
         document.getElementById('d_val').value = n.toISOString().split('T')[0];
         document.getElementById('t_val').value = n.toTimeString().slice(0,5);
-        document.getElementById('la_val').value = "41.8902";
-        document.getElementById('lo_val').value = "12.4922";
-        ['d_val', 't_val', 'la_val', 'lo_val', 'p_watt', 'tilt_range'].forEach(id => {
+        ['d_val', 't_val', 'p_watt', 'tilt_range', 'tilt_val'].forEach(id => {
             document.getElementById(id).oninput = update;
         });
         update();
