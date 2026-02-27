@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solar Vibe Tracker 2.1</title>
+    <title>Solar Vibe Tracker 2.2</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
@@ -19,7 +19,7 @@
         }
         .card {
             width: 100%;
-            max-width: 380px;
+            max-width: 400px;
             padding: 25px;
             background: rgba(30, 41, 59, 0.8);
             border-radius: 30px;
@@ -29,160 +29,45 @@
             box-shadow: 0 25px 50px rgba(0,0,0,0.6);
         }
         .sun-display {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             background: radial-gradient(circle, #fde047 0%, #f59e0b 70%);
             border-radius: 50%;
-            margin: 15px auto;
-            box-shadow: 0 0 40px #f59e0b;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            margin: 10px auto;
+            box-shadow: 0 0 30px #f59e0b;
+            transition: all 0.5s ease;
         }
-        .time-travel {
+        .section {
             background: rgba(0,0,0,0.2);
             padding: 15px;
             border-radius: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            text-align: left;
         }
-        .input-group { display: flex; gap: 10px; margin-top: 10px; }
+        .label { font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; display: block; margin-bottom: 8px; font-weight: bold; letter-spacing: 1px; }
+        
+        .input-group { display: flex; gap: 8px; margin-bottom: 8px; }
         input {
             flex: 1;
             background: #1e293b;
             border: 1px solid #334155;
             color: white;
-            padding: 8px;
-            border-radius: 8px;
+            padding: 10px;
+            border-radius: 10px;
             font-family: inherit;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             outline: none;
+            transition: border 0.3s;
         }
-        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+        input:focus { border-color: #38bdf8; }
+
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .data-item {
             background: rgba(255,255,255,0.05);
             padding: 12px;
-            border-radius: 18px;
-            border: 1px solid rgba(255,255,255,0.03);
-        }
-        .label { font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; display: block; margin-bottom: 4px; }
-        .val { font-size: 0.9rem; font-weight: bold; color: #fbbf24; }
-        
-        button {
-            width: 100%;
-            padding: 14px;
             border-radius: 15px;
-            border: none;
-            background: #38bdf8;
-            color: #0f172a;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
+            text-align: center;
         }
-        .night { filter: grayscale(1) brightness(0.5); opacity: 0.4; }
-    </style>
-</head>
-<body>
-
-<div class="card">
-    <div style="font-size: 0.7rem; letter-spacing: 3px; opacity: 0.5; margin-bottom: 10px;">SOLAR PRECISION</div>
-    
-    <div class="sun-display" id="sun-icon"></div>
-    
-    <div class="time-travel">
-        <span class="label">Simulazione Temporale</span>
-        <div class="input-group">
-            <input type="date" id="input-date" onchange="calculateSolar()">
-            <input type="time" id="input-time" onchange="calculateSolar()">
-        </div>
-    </div>
-
-    <div class="data-grid">
-        <div class="data-item">
-            <span class="label">Resa Stimata</span>
-            <span id="yield" class="val">0%</span>
-        </div>
-        <div class="data-item">
-            <span class="label">Altezza Sole</span>
-            <span id="alt" class="val">0°</span>
-        </div>
-        <div class="data-item" style="grid-column: span 2;">
-            <span class="label">Coordinate Rilevate</span>
-            <span id="coord-val" class="val" style="color: #38bdf8;">Rilevamento...</span>
-        </div>
-    </div>
-
-    <button onclick="initGPS()">Aggiorna Posizione GPS</button>
-</div>
-
-<script>
-let userLat = 41.9; 
-let userLon = 12.5;
-
-function initGPS() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(p => {
-            userLat = p.coords.latitude;
-            userLon = p.coords.longitude;
-            document.getElementById('coord-val').innerText = `${userLat.toFixed(4)}° N | ${userLon.toFixed(4)}° E`;
-            calculateSolar();
-        }, () => {
-            document.getElementById('coord-val').innerText = "Errore GPS - Usando Default";
-        });
-    }
-}
-
-function calculateSolar() {
-    const dateVal = document.getElementById('input-date').value;
-    const timeVal = document.getElementById('input-time').value;
-    if (!dateVal || !timeVal) return;
-
-    const selectedDate = new Date(`${dateVal}T${timeVal}`);
-    
-    // 1. Calcolo Giorno dell'anno
-    const start = new Date(selectedDate.getFullYear(), 0, 0);
-    const dayOfYear = Math.floor((selectedDate - start) / (1000 * 60 * 60 * 24));
-    
-    // 2. Declinazione (δ)
-    const declRad = 0.409 * Math.sin((2 * Math.PI / 365) * (dayOfYear - 81));
-    
-    // 3. Correzione Longitudine per il tempo solare
-    // Il sole "si muove" di 15 gradi ogni ora. La longitudine sposta il mezzogiorno.
-    const timezone = selectedDate.getTimezoneOffset() / -60;
-    const localTime = selectedDate.getHours() + selectedDate.getMinutes() / 60;
-    const solarTime = localTime + (4 * userLon - 60 * timezone) / 60;
-    const hourAngleRad = (solarTime - 12) * 15 * (Math.PI / 180);
-
-    // 4. Calcolo Altitudine (α)
-    const latRad = userLat * (Math.PI / 180);
-    const sinAlt = Math.sin(latRad) * Math.sin(declRad) + 
-                   Math.cos(latRad) * Math.cos(declRad) * Math.cos(hourAngleRad);
-    
-    const altDegrees = Math.asin(sinAlt) * (180 / Math.PI);
-
-    // UI Updates
-    const sunIcon = document.getElementById('sun-icon');
-    const altEl = document.getElementById('alt');
-    const yieldEl = document.getElementById('yield');
-
-    if (altDegrees > 0) {
-        altEl.innerText = Math.round(altDegrees) + "°";
-        const yieldPerc = Math.round(Math.sin(altDegrees * Math.PI / 180) * 100);
-        yieldEl.innerText = yieldPerc + "%";
-        sunIcon.classList.remove('night');
-        sunIcon.style.transform = `scale(${0.5 + (yieldPerc/200)})`;
-        sunIcon.style.boxShadow = `0 0 ${20 + yieldPerc/2}px #f59e0b`;
-    } else {
-        altEl.innerText = "Sotto l'orizzonte";
-        yieldEl.innerText = "0%";
-        sunIcon.classList.add('night');
-        sunIcon.style.transform = "scale(0.3)";
-    }
-}
-
-// Setup iniziale
-const now = new Date();
-document.getElementById('input-date').value = now.toISOString().split('T')[0];
-document.getElementById('input-time').value = now.toTimeString().slice(0,5);
-initGPS();
-</script>
-
-</body>
-</html>
+        .val { font-size: 1rem; font-weight: bold; color: #fbbf24; display: block; }
+        
+        .gps-btn {
