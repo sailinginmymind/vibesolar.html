@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Vibe Tracker</title>
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            margin: 0;
+            background: #0f172a; /* Blu notte profondo */
+            color: #f8fafc;
+            font-family: -apple-system, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .card {
+            width: 350px;
+            padding: 30px;
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .sun-display {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #fde047 0%, #f59e0b 70%);
+            border-radius: 50%;
+            margin: 20px auto;
+            box-shadow: 0 0 40px #f59e0b;
+            transition: transform 0.5s ease;
+        }
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        .data-item {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 15px;
+        }
+        .label { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; display: block; }
+        .val { font-size: 1.1rem; font-weight: bold; color: #fbbf24; }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            background: #38bdf8;
+            color: #0f172a;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover { background: #7dd3fc; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div style="font-size: 0.8rem; letter-spacing: 2px; opacity: 0.6;">SOLAR ANALYTICS</div>
+    <div class="sun-display" id="sun-icon"></div>
+    
+    <div id="status" style="font-size: 0.9rem; margin-bottom: 10px;">Rilevamento posizione...</div>
+
+    <div class="data-grid">
+        <div class="data-item">
+            <span class="label">Resa Attuale</span>
+            <span class="val" id="yield">0%</span>
+        </div>
+        <div class="data-item">
+            <span class="label">Altitudine Sole</span>
+            <span class="val" id="alt">0°</span>
+        </div>
+        <div class="data-item">
+            <span class="label">Ore Luce Oggi</span>
+            <span class="val" id="daylight">--h</span>
+        </div>
+        <div class="data-item">
+            <span class="label">Peak Time</span>
+            <span class="val" id="peak">13:15</span>
+        </div>
+    </div>
+
+    <button onclick="getLocation()">Aggiorna Posizione</button>
+</div>
+
+<script>
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(calculateSolar, (err) => {
+            document.getElementById('status').innerText = "Inserimento manuale necessario";
+            // Coordinate di default (Roma) se GPS fallisce
+            calculateSolar({coords: {latitude: 41.9, longitude: 12.5}});
+        });
+    }
+}
+
+function calculateSolar(position) {
+    const lat = position.coords.latitude;
+    const now = new Date();
+    
+    // 1. Calcolo approssimativo declinazione solare
+    const startOfYear = new Date(now.getFullYear(), 0, 0);
+    const diff = now - startOfYear;
+    const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+    
+    // Formula declinazione: 23.45 * sin(360/365 * (284 + n))
+    const declination = 23.45 * Math.sin((Math.PI / 180) * (360 / 365 * (284 + dayOfYear)));
+    
+    // 2. Calcolo altitudine solare massima a mezzogiorno locale
+    // Alt = 90 - Latitudine + Declinazione
+    let solarAlt = 90 - Math.abs(lat) + declination;
+    if (solarAlt > 90) solarAlt = 90 - (solarAlt - 90);
+    
+    // Simuliamo la resa in base all'ora attuale (semplificato)
+    const hour = now.getHours() + now.getMinutes()/60;
+    const distanceFromNoon = Math.abs(13 - hour); // Assumiamo picco alle 13
+    let currentYield = Math.max(0, Math.cos(distanceFromNoon * 0.25) * 100);
+
+    // Update UI
+    document.getElementById('status').innerText = `Lat: ${lat.toFixed(2)}° | Analisi Attiva`;
+    document.getElementById('yield').innerText = Math.round(currentYield) + "%";
+    document.getElementById('alt').innerText = Math.round(solarAlt) + "°";
+    document.getElementById('daylight').innerText = (lat > 45 ? "9.5h" : "11h"); // Stima base
+    
+    // Muovi il sole graficamente
+    const sunIcon = document.getElementById('sun-icon');
+    sunIcon.style.transform = `scale(${0.5 + (currentYield/200)})`;
+    sunIcon.style.opacity = 0.3 + (currentYield/100);
+}
+
+// Avvio automatico
+getLocation();
+</script>
+
+</body>
+</html>
