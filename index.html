@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vibe Solar App</title>
+    <title>Vibe Solar - Energy Chart</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
@@ -18,6 +18,7 @@
 
         h2 { margin: 10px 0 15px 0; letter-spacing: 2px; color: #38bdf8; text-align: center; font-size: 1.5rem; }
 
+        /* NAVBAR */
         .navbar {
             position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
             width: 100%; max-width: 500px; height: 70px;
@@ -28,6 +29,7 @@
         .nav-item.active { color: #38bdf8; }
         .nav-icon { font-size: 22px; display: block; margin-bottom: 4px; }
 
+        /* CARDS */
         .card { background: #1e293b; border-radius: 20px; padding: 18px; border: 1px solid #334155; margin-bottom: 12px; }
         .section-title { font-size: 11px; color: #94a3b8; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 8px; }
         
@@ -36,26 +38,45 @@
             width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #334155; 
             background: #0f172a; color: white; font-size: 15px; outline: none;
         }
-        input:focus { border-color: #38bdf8; }
 
-        .search-group { position: relative; display: flex; gap: 5px; margin-bottom: 12px; }
-        .btn { 
-            padding: 12px; background: #38bdf8; color: #0f172a; border: none; 
-            border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 12px;
+        .btn { padding: 12px; background: #38bdf8; color: #0f172a; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 12px; width: 100%; }
+
+        /* GRAFICO A BARRE */
+        .chart-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 120px;
+            margin-top: 20px;
+            padding: 0 5px;
+            border-bottom: 1px solid #334155;
         }
-        .btn-gps { background: transparent; border: 1px solid #38bdf8; color: #38bdf8; margin-top: 10px; width: 100%; }
-        
-        /* Messaggio Errore */
-        #search-msg { font-size: 11px; color: #f87171; margin-bottom: 10px; display: none; text-align: center; font-weight: bold; }
+        .bar-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            margin: 0 1px;
+        }
+        .bar {
+            width: 80%;
+            background: linear-gradient(to top, #0ea5e9, #38bdf8);
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            transition: height 0.5s ease;
+            position: relative;
+        }
+        .bar:hover { background: #fbbf24; }
+        .bar-label { font-size: 8px; color: #64748b; margin-top: 5px; }
 
         /* LIVE ELEMENTS */
         .sky-container { width: 100%; height: 70px; position: relative; border-bottom: 1px solid #334155; overflow: hidden; margin-bottom: 10px; }
         .sun-arc { width: 160px; height: 160px; border: 1px dashed rgba(251, 191, 36, 0.2); border-radius: 50%; position: absolute; left: 50%; transform: translateX(-50%); top: 15px; }
         #sun-dot { width: 16px; height: 16px; background: #fbbf24; border-radius: 50%; position: absolute; top: -8px; left: 50%; transform-origin: center 80px; box-shadow: 0 0 10px #fbbf24; }
         
-        /* ENERGY ELEMENTS */
-        .big-res { font-size: 38px; color: #fbbf24; font-weight: bold; display: block; margin: 5px 0; }
-        .sub-res { font-size: 16px; color: #38bdf8; font-weight: bold; }
+        /* RISULTATI */
+        .big-res { font-size: 34px; color: #fbbf24; font-weight: bold; display: block; margin: 5px 0; }
     </style>
 </head>
 <body>
@@ -73,59 +94,48 @@
         </div>
 
         <div class="card">
-            <span class="section-title">Posizione e Ricerca</span>
-            
-            <div class="search-group">
-                <input type="text" id="search_input" placeholder="Cerca città o luogo...">
-                <button class="btn" onclick="searchPlace()">CERCA</button>
+            <span class="section-title">Ricerca e GPS</span>
+            <div style="display:flex; gap:5px; margin-bottom:10px;">
+                <input type="text" id="search_input" placeholder="Cerca città...">
+                <button class="btn" style="width:80px" onclick="searchPlace()">VAI</button>
             </div>
-            
-            <div id="search-msg">⚠️ Luogo non trovato. Inserisci manualmente:</div>
-
             <div class="grid-2">
-                <div>
-                    <label class="section-title" style="font-size:9px">Latitudine</label>
-                    <input type="number" id="la_val" placeholder="Es: 41.89" step="0.0001">
-                </div>
-                <div>
-                    <label class="section-title" style="font-size:9px">Longitudine</label>
-                    <input type="number" id="lo_val" placeholder="Es: 12.49" step="0.0001">
-                </div>
+                <input type="number" id="la_val" placeholder="Lat" step="0.0001">
+                <input type="number" id="lo_val" placeholder="Lon" step="0.0001">
             </div>
-            
-            <button class="btn btn-gps" onclick="askGPS()">📍 USA POSIZIONE GPS ATTUALE</button>
+            <button class="btn" style="background:transparent; border:1px solid #38bdf8; color:#38bdf8; margin-top:10px" onclick="askGPS()">📍 USA GPS ATTUALE</button>
         </div>
 
-        <div class="card">
-            <div style="text-align: center;">
-                <span id="w_out" style="font-size: 42px; color: #38bdf8; font-weight: bold;">0 W</span>
-                <div class="grid-2" style="margin-top:15px; border-top: 1px solid #334155; padding-top:15px;">
-                    <div><small class="section-title">Resa</small><b id="y_out" style="font-size:18px">--</b></div>
-                    <div><small class="section-title">Sole</small><b id="a_out" style="font-size:18px">--</b></div>
-                </div>
+        <div class="card" style="text-align: center;">
+            <span class="section-title">Produzione Istantanea</span>
+            <span id="w_out" style="font-size: 48px; color: #38bdf8; font-weight: bold;">0 W</span>
+            <div class="grid-2" style="margin-top:10px; border-top: 1px solid #334155; padding-top:10px;">
+                <div><small class="section-title">Resa</small><b id="y_out">--</b></div>
+                <div><small class="section-title">Sole</small><b id="a_out">--</b></div>
             </div>
         </div>
     </div>
 
     <div id="view-energy" class="view">
         <div class="card" style="text-align: center;">
-            <span class="section-title">Bottino Giornaliero Stimato</span>
+            <span class="section-title">Previsione Giornaliera</span>
             <span class="big-res" id="daily_wh">0 Wh</span>
-            <span class="sub-res">≈ <span id="daily_ah">0</span> Ah</span>
-            <p style="font-size: 11px; color: #94a3b8; margin-top: 10px;">Stima basata su impianto a 12V</p>
+            <span style="color: #38bdf8; font-weight: bold;">≈ <span id="daily_ah">0</span> Ah (12V)</span>
+            
+            <div class="chart-container" id="chart">
+                </div>
         </div>
 
         <div class="card">
-            <span class="section-title">Parametri Pannelli</span>
+            <span class="section-title">Setup Camper</span>
             <div class="grid-2">
-                <div><label class="section-title" style="font-size:9px">Potenza (Wp)</label><input type="number" id="p_watt" value="100"></div>
-                <div><label class="section-title" style="font-size:9px">Inclinazione</label><input type="number" id="tilt_val" value="0"></div>
+                <div><label class="section-title" style="font-size:9px">Watt Pannello</label><input type="number" id="p_watt" value="100"></div>
+                <div><label class="section-title" style="font-size:9px">Tilt <b id="tilt_txt">0°</b></label><input type="range" id="tilt_range" min="0" max="90" value="0"></div>
             </div>
-            <input type="range" id="tilt_range" min="0" max="90" value="0" style="margin-top:15px; width:100%; accent-color:#38bdf8">
         </div>
 
         <div class="card">
-            <span class="section-title">Simulazione Tempo</span>
+            <span class="section-title">Data e Ora Simulazione</span>
             <div class="grid-2">
                 <input type="date" id="d_val">
                 <input type="time" id="t_val">
@@ -135,7 +145,7 @@
 
     <div class="navbar">
         <div class="nav-item active" onclick="switchView('live', this)"><span class="nav-icon">☀️</span>LIVE</div>
-        <div class="nav-item" onclick="switchView('energy', this)"><span class="nav-icon">🔋</span>ENERGY</div>
+        <div class="nav-item" onclick="switchView('energy', this)"><span class="nav-icon">📊</span>REPORT</div>
     </div>
 </div>
 
@@ -150,29 +160,27 @@
 
     async function searchPlace() {
         const query = document.getElementById('search_input').value;
-        const msg = document.getElementById('search-msg');
         if (!query) return;
-        
-        msg.style.display = "none";
-        const btn = document.querySelector('.search-group .btn');
-        const originalText = btn.innerText;
-        btn.innerText = "...";
-
         try {
-            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
-            const data = await response.json();
-            if (data && data.length > 0) {
-                document.getElementById('la_val').value = parseFloat(data[0].lat).toFixed(4);
-                document.getElementById('lo_val').value = parseFloat(data[0].lon).toFixed(4);
+            const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+            const d = await r.json();
+            if (d.length > 0) {
+                document.getElementById('la_val').value = parseFloat(d[0].lat).toFixed(4);
+                document.getElementById('lo_val').value = parseFloat(d[0].lon).toFixed(4);
                 update();
-            } else {
-                msg.style.display = "block"; // MOSTRA AVVISO
-            }
-        } catch (e) {
-            msg.innerText = "⚠️ Errore di connessione.";
-            msg.style.display = "block";
-        }
-        btn.innerText = originalText;
+            } else { alert("Luogo non trovato."); }
+        } catch (e) { alert("Errore ricerca."); }
+    }
+
+    function getSunAlt(dateObj, lat, lon) {
+        const day = Math.floor((dateObj - new Date(dateObj.getFullYear(), 0, 0)) / 86400000);
+        const decl = 0.409 * Math.sin((2 * Math.PI / 365) * (day - 81));
+        const off = dateObj.getTimezoneOffset() / -60;
+        const sol = (dateObj.getHours() + dateObj.getMinutes() / 60) + (4 * lon - 60 * off) / 60;
+        const ha = (sol - 12) * 15 * (Math.PI / 180);
+        const lr = lat * (Math.PI / 180);
+        const sa = Math.sin(lr) * Math.sin(decl) + Math.cos(lr) * Math.cos(decl) * Math.cos(ha);
+        return Math.asin(sa);
     }
 
     function update() {
@@ -183,66 +191,65 @@
         const pWatt = parseFloat(document.getElementById('p_watt').value) || 0;
         const tilt = parseFloat(document.getElementById('tilt_range').value);
         
-        document.getElementById('tilt_val').value = tilt;
+        document.getElementById('tilt_txt').innerText = tilt + "°";
 
         if (!dv || !tv || isNaN(lat) || isNaN(lon)) return;
 
-        function getSunAlt(dateObj) {
-            const day = Math.floor((dateObj - new Date(dateObj.getFullYear(), 0, 0)) / 86400000);
-            const decl = 0.409 * Math.sin((2 * Math.PI / 365) * (day - 81));
-            const off = dateObj.getTimezoneOffset() / -60;
-            const sol = (dateObj.getHours() + dateObj.getMinutes() / 60) + (4 * lon - 60 * off) / 60;
-            const ha = (sol - 12) * 15 * (Math.PI / 180);
-            const lr = lat * (Math.PI / 180);
-            const sa = Math.sin(lr) * Math.sin(decl) + Math.cos(lr) * Math.cos(decl) * Math.cos(ha);
-            return Math.asin(sa);
-        }
-
         const now = new Date(dv + 'T' + tv);
-        const sunAltRad = getSunAlt(now);
-        const sunAltDeg = sunAltRad * (180 / Math.PI);
+        const sAltRad = getSunAlt(now, lat, lon);
+        const sAltDeg = sAltRad * (180 / Math.PI);
 
-        const decl = 0.409 * Math.sin((Math.floor((now - new Date(now.getFullYear(),0,0))/86400000) - 81) * 2 * Math.PI/365);
-        const cosH = -Math.tan(lat * Math.PI/180) * Math.tan(decl);
-        let sunriseH = 6, sunsetH = 18;
-        if (cosH >= -1 && cosH <= 1) {
-            const h = Math.acos(cosH) * (180/Math.PI) / 15;
-            const meanNoon = 12 - (4 * lon - 60 * (now.getTimezoneOffset()/-60)) / 60;
-            sunriseH = meanNoon - h; sunsetH = meanNoon + h;
-        }
-
-        const formatTime = h => `${String(Math.floor(h)).padStart(2,'0')}:${String(Math.floor((h%1)*60)).padStart(2,'0')}`;
-        document.getElementById('sunrise-t').innerText = formatTime(sunriseH);
-        document.getElementById('sunset-t').innerText = formatTime(sunsetH);
-
-        if (sunAltDeg > 0) {
-            const tiltRad = tilt * (Math.PI / 180);
-            const yield = Math.cos((Math.PI/2) - sunAltRad - tiltRad);
-            const currentYield = Math.round(Math.max(0, yield) * 100);
-            document.getElementById('w_out').innerText = Math.round(pWatt * (currentYield/100)) + " W";
-            document.getElementById('y_out').innerText = currentYield + "%";
-            document.getElementById('a_out').innerText = Math.round(sunAltDeg) + "°";
+        // --- LIVE UPDATE ---
+        if (sAltDeg > 0) {
+            const yield = Math.cos((Math.PI/2) - sAltRad - (tilt * Math.PI/180));
+            const curYield = Math.round(Math.max(0, yield) * 100);
+            document.getElementById('w_out').innerText = Math.round(pWatt * (curYield/100)) + " W";
+            document.getElementById('y_out').innerText = curYield + "%";
+            document.getElementById('a_out').innerText = Math.round(sAltDeg) + "°";
             
+            // Arco sole
+            const decl = 0.409 * Math.sin((Math.floor((now - new Date(now.getFullYear(),0,0))/86400000) - 81) * 2 * Math.PI/365);
+            const cosH = -Math.tan(lat * Math.PI/180) * Math.tan(decl);
+            const h = Math.acos(Math.max(-1, Math.min(1, cosH))) * (180/Math.PI) / 15;
+            const meanNoon = 12 - (4 * lon - 60 * (now.getTimezoneOffset()/-60)) / 60;
+            const sunriseH = meanNoon - h; const sunsetH = meanNoon + h;
             const solNow = (now.getHours() + now.getMinutes() / 60) + (4 * lon - 60 * (now.getTimezoneOffset()/-60)) / 60;
             const progress = (solNow - sunriseH) / (sunsetH - sunriseH);
             document.getElementById('sun-dot').style.transform = `translateX(-50%) rotate(${(progress * 180) - 90}deg)`;
             document.getElementById('sun-dot').style.opacity = "1";
+            document.getElementById('sunrise-t').innerText = Math.floor(sunriseH)+":"+String(Math.floor((sunriseH%1)*60)).padStart(2,'0');
+            document.getElementById('sunset-t').innerText = Math.floor(sunsetH)+":"+String(Math.floor((sunsetH%1)*60)).padStart(2,'0');
         } else {
             document.getElementById('w_out').innerText = "0 W";
-            document.getElementById('y_out').innerText = "0%";
-            document.getElementById('a_out').innerText = "NOTTE";
             document.getElementById('sun-dot').style.opacity = "0";
         }
 
+        // --- REPORT & CHART UPDATE ---
         let totalWh = 0;
-        for (let h = sunriseH; h <= sunsetH; h += 0.25) {
+        const chartObj = document.getElementById('chart');
+        chartObj.innerHTML = ""; // Pulisci grafico
+
+        for (let h = 5; h <= 21; h++) { // Ciclo ore del giorno
             const simDate = new Date(now);
-            simDate.setHours(Math.floor(h), (h % 1) * 60);
-            const sAlt = getSunAlt(simDate);
+            simDate.setHours(h, 0, 0);
+            const sAlt = getSunAlt(simDate, lat, lon);
+            let hWatt = 0;
+            
             if (sAlt > 0) {
                 const sYield = Math.cos((Math.PI/2) - sAlt - (tilt * Math.PI/180));
-                totalWh += (pWatt * Math.max(0, sYield)) * 0.25;
+                hWatt = pWatt * Math.max(0, sYield);
+                totalWh += hWatt;
             }
+
+            // Crea Barra Grafico
+            const barWrap = document.createElement('div');
+            barWrap.className = 'bar-wrapper';
+            const barHeight = (hWatt / pWatt) * 100;
+            barWrap.innerHTML = `
+                <div class="bar" style="height: ${barHeight}%"></div>
+                <div class="bar-label">${h}</div>
+            `;
+            chartObj.appendChild(barWrap);
         }
         document.getElementById('daily_wh').innerText = Math.round(totalWh) + " Wh";
         document.getElementById('daily_ah').innerText = Math.round(totalWh / 12);
@@ -253,7 +260,6 @@
             navigator.geolocation.getCurrentPosition(p => {
                 document.getElementById('la_val').value = p.coords.latitude.toFixed(4);
                 document.getElementById('lo_val').value = p.coords.longitude.toFixed(4);
-                document.getElementById('search-msg').style.display = "none";
                 update();
             });
         }
@@ -265,7 +271,7 @@
         document.getElementById('t_val').value = n.toTimeString().slice(0,5);
         document.getElementById('la_val').value = "41.8902";
         document.getElementById('lo_val').value = "12.4922";
-        ['d_val', 't_val', 'la_val', 'lo_val', 'p_watt', 'tilt_range', 'tilt_val'].forEach(id => {
+        ['d_val', 't_val', 'p_watt', 'tilt_range'].forEach(id => {
             document.getElementById(id).oninput = update;
         });
         update();
