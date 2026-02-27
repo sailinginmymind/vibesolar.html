@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vibe Solar - Custom Radar</title>
+    <title>Vibe Solar - Pro Radar HD</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
@@ -15,69 +15,70 @@
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        h2 { margin: 5px 0 15px 0; letter-spacing: 2px; color: #38bdf8; text-align: center; font-size: 1.4rem; }
+        h2 { margin: 10px 0 20px 0; letter-spacing: 3px; color: #38bdf8; text-align: center; font-size: 1.6rem; font-weight: 900; }
 
-        .card { background: #1e293b; border-radius: 20px; padding: 20px; border: 1px solid #334155; margin-bottom: 12px; position: relative; }
-        .section-title { font-size: 11px; color: #94a3b8; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 12px; }
+        .card { background: #1e293b; border-radius: 24px; padding: 25px; border: 1px solid #334155; margin-bottom: 15px; position: relative; }
+        .section-title { font-size: 12px; color: #94a3b8; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 12px; letter-spacing: 1px; }
         
-        .btn-sync { padding: 14px; background: #fbbf24; color: #0f172a; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 13px; width: 100%; margin-bottom: 15px; }
+        .btn-sync { padding: 16px; background: #fbbf24; color: #0f172a; border: none; border-radius: 14px; font-weight: 900; cursor: pointer; font-size: 14px; width: 100%; margin-bottom: 20px; text-transform: uppercase; }
 
-        /* RADAR SYSTEM */
+        /* RADAR SYSTEM - BIG EDITION */
         .radar-container {
-            position: relative; width: 300px; height: 300px; margin: 10px auto;
+            position: relative; width: 320px; height: 320px; margin: 15px auto;
             display: flex; align-items: center; justify-content: center;
         }
         
         .sky-orbit {
-            position: absolute; width: 230px; height: 230px; border-radius: 50%;
-            border: 1px solid rgba(148, 163, 184, 0.1);
+            position: absolute; width: 240px; height: 240px; border-radius: 50%;
+            border: 2px solid rgba(56, 189, 248, 0.2);
         }
 
         .horizon-line {
-            position: absolute; width: 260px; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.4), transparent);
+            position: absolute; width: 280px; height: 2px;
+            background: linear-gradient(90deg, transparent, #fbbf24, transparent);
             top: 50%; left: 50%; transform: translate(-50%, -50%);
             z-index: 1;
         }
+        .horizon-label {
+            position: absolute; font-size: 10px; color: #fbbf24; font-weight: 900;
+            top: -15px; text-transform: uppercase;
+        }
 
         #celestial-body {
-            position: absolute; width: 26px; height: 26px; 
+            position: absolute; width: 32px; height: 32px; 
             display: flex; align-items: center; justify-content: center;
-            border-radius: 50%; top: -13px; left: 50%; 
-            transform-origin: center 115px;
+            border-radius: 50%; top: -16px; left: 50%; 
+            transform-origin: center 120px;
             z-index: 10; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            font-size: 20px;
+            font-size: 24px;
         }
 
         .radar-circle {
-            width: 140px; height: 140px; border-radius: 50%;
+            width: 150px; height: 150px; border-radius: 50%;
             background: #0f172a;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border: 2px solid #334155; box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            z-index: 2; transition: background 1s ease;
+            border: 4px solid #334155; box-shadow: 0 0 40px rgba(0,0,0,0.7);
+            z-index: 2; transition: all 1s ease;
         }
 
-        /* POSIZIONI COORDINATE RICHIESTE */
-        .radar-info { position: absolute; color: #94a3b8; font-weight: bold; text-align: center; width: 90px; z-index: 3; }
-        
-        /* Ore 12 */
-        .pos-12 { top: -10px; left: 50%; transform: translateX(-50%); } 
-        /* Ore 16 (4 del pomeriggio) -> circa 120 gradi */
-        .pos-16 { bottom: 30px; right: -5px; }
-        /* Ore 20 (8 di sera) -> circa 240 gradi */
-        .pos-20 { bottom: 30px; left: -5px; }
+        /* COORDINATE ORE 12, 16, 20 - LARGE */
+        .radar-info { position: absolute; color: #94a3b8; font-weight: bold; text-align: center; width: 100px; z-index: 3; }
+        .pos-12 { top: -20px; left: 50%; transform: translateX(-50%); } 
+        .pos-16 { bottom: 20px; right: -15px; }
+        .pos-20 { bottom: 20px; left: -15px; }
 
-        .radar-label { font-size: 9px; letter-spacing: 1px; color: #38bdf8; }
-        .radar-val { display: block; color: white; font-size: 20px; margin-top: 2px; }
+        .radar-label { font-size: 11px; letter-spacing: 1px; color: #38bdf8; display: block; margin-bottom: 2px; }
+        .radar-val { display: block; color: white; font-size: 26px; font-weight: 900; line-height: 1; }
+        .unit { font-size: 12px; color: #94a3b8; margin-left: 2px; }
 
-        .big-w { font-size: 48px; color: #38bdf8; font-weight: bold; margin: 5px 0; display: block; }
-        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .big-w { font-size: 54px; color: #38bdf8; font-weight: 900; margin: 5px 0; display: block; text-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
+        input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 16px; font-weight: bold; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
-        .navbar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; height: 75px; background: #1e293b; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #334155; z-index: 1000; }
-        .nav-item { color: #94a3b8; font-size: 10px; font-weight: bold; cursor: pointer; text-align: center; flex: 1; }
+        .navbar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; height: 80px; background: #1e293b; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #334155; z-index: 1000; }
+        .nav-item { color: #94a3b8; font-size: 11px; font-weight: 900; cursor: pointer; text-align: center; flex: 1; }
         .nav-item.active { color: #38bdf8; }
-        .nav-icon { font-size: 24px; display: block; margin-bottom: 4px; }
+        .nav-icon { font-size: 28px; display: block; margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -86,7 +87,7 @@
     <h2>VIBE SOLAR</h2>
 
     <div id="view-live" class="view active">
-        <button id="main-sync" class="btn btn-sync" onclick="fullSync()">⚡ SINCRONIZZA DATI CAMPER</button>
+        <button id="main-sync" class="btn btn-sync" onclick="fullSync()">⚡ SINCRONIZZA RADAR</button>
 
         <div class="card" style="text-align: center;">
             <div class="radar-container">
@@ -103,28 +104,29 @@
                     <span class="radar-val" id="r-temp">--</span>
                 </div>
                 
-                <div class="sky-orbit">
-                    <div id="celestial-body">☀️</div>
-                </div>
+                <div class="sky-orbit"><div id="celestial-body">☀️</div></div>
                 
-                <div class="horizon-line"></div>
+                <div class="horizon-line">
+                    <span class="horizon-label" style="left:0">ALBA</span>
+                    <span class="horizon-label" style="right:0">TRAMONTO</span>
+                </div>
 
                 <div id="radar-center" class="radar-circle">
-                    <span id="r-icon-center" style="font-size:42px">☀️</span>
-                    <span id="r-cloud-percent" style="font-size: 11px; color: #94a3b8; margin-top:5px;">NUBI: --%</span>
-                    <span id="r-status" style="font-size: 8px; color: #38bdf8; margin-top:3px; font-weight:bold; letter-spacing:1px">PRONTO</span>
+                    <span id="r-icon-center" style="font-size:50px">☀️</span>
+                    <span id="r-cloud-percent" style="font-size: 16px; color: white; font-weight: 900; margin-top:5px;">--%</span>
+                    <span class="radar-label" style="font-size: 9px;">COPERTURA NUBI</span>
                 </div>
             </div>
 
             <span id="w_out" class="big-w">0 W</span>
             <div class="grid-2" style="border-top: 1px solid #334155; padding-top: 15px; margin-top:10px;">
-                <div><small class="section-title">Alba oggi</small><b id="sunrise-txt" style="font-size:16px; color:#fbbf24">--:--</b></div>
-                <div><small class="section-title">Tramonto oggi</small><b id="sunset-txt" style="font-size:16px; color:#fbbf24">--:--</b></div>
+                <div><small class="section-title">Sunrise</small><b id="sunrise-txt" style="font-size:18px; color:#fbbf24">--:--</b></div>
+                <div><small class="section-title">Sunset</small><b id="sunset-txt" style="font-size:18px; color:#fbbf24">--:--</b></div>
             </div>
         </div>
 
         <div class="card">
-            <span class="section-title">Parametri di Calcolo</span>
+            <span class="section-title">Geolocalizzazione e Ora</span>
             <div class="grid-2" style="margin-bottom:12px;">
                 <input type="date" id="d_val"><input type="time" id="t_val">
             </div>
@@ -136,17 +138,17 @@
 
     <div id="view-energy" class="view">
         <div class="card">
-            <span class="section-title">Impianto Solare</span>
+            <span class="section-title">Configurazione Impianto</span>
             <div class="grid-2">
                 <div><label class="section-title">Watt (Wp)</label><input type="number" id="p_watt" value="100"></div>
-                <div><label class="section-title">Tilt <b id="tilt_txt">0°</b></label><input type="range" id="tilt_range" min="0" max="90" value="0"></div>
+                <div><label class="section-title">Tilt <b id="tilt_txt" style="color:#38bdf8">0°</b></label><input type="range" id="tilt_range" min="0" max="90" value="0"></div>
             </div>
         </div>
         <div class="card" style="text-align: center;">
-            <span class="section-title">Energia Stimata</span>
-            <span style="font-size: 42px; color: #fbbf24; font-weight: bold;" id="daily_wh">0 Wh</span>
-            <div style="font-size:18px; color:#38bdf8; font-weight:bold">≈ <span id="daily_ah">0</span> Ah</div>
-            <div id="chart" style="display:flex; align-items:flex-end; justify-content:space-between; height:100px; margin-top:25px; border-bottom:1px solid #334155"></div>
+            <span class="section-title">Produzione Giornaliera Stimata</span>
+            <span style="font-size: 48px; color: #fbbf24; font-weight: 900;" id="daily_wh">0 Wh</span>
+            <div style="font-size:22px; color:#38bdf8; font-weight:900">≈ <span id="daily_ah">0</span> Ah</div>
+            <div id="chart" style="display:flex; align-items:flex-end; justify-content:space-between; height:120px; margin-top:30px; border-bottom:2px solid #334155"></div>
         </div>
     </div>
 
@@ -162,7 +164,7 @@
 
     async function fullSync() {
         const btn = document.getElementById('main-sync');
-        btn.innerText = "🛰️ SYNCING...";
+        btn.innerText = "📡 ANALISI IN CORSO...";
         const n = new Date();
         document.getElementById('d_val').value = n.toISOString().split('T')[0];
         document.getElementById('t_val').value = n.toTimeString().slice(0,5);
@@ -175,25 +177,26 @@
                     const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,cloud_cover,wind_speed_10m&daily=sunrise,sunset&timezone=auto`);
                     const d = await r.json();
                     if (d.current) {
-                        document.getElementById('r-temp').innerText = Math.round(d.current.temperature_2m) + "°";
-                        document.getElementById('r-hum').innerText = d.current.relative_humidity_2m + "%";
-                        document.getElementById('r-wind').innerText = Math.round(d.current.wind_speed_10m) + " <small>km/h</small>";
+                        // Aggiornamento Valori Grandi
+                        document.getElementById('r-temp').innerHTML = Math.round(d.current.temperature_2m) + '<span class="unit">°C</span>';
+                        document.getElementById('r-hum').innerHTML = d.current.relative_humidity_2m + '<span class="unit">%</span>';
+                        document.getElementById('r-wind').innerHTML = Math.round(d.current.wind_speed_10m) + '<span class="unit">km/h</span>';
+                        
                         document.getElementById('sunrise-txt').innerText = d.daily.sunrise[0].split('T')[1];
                         document.getElementById('sunset-txt').innerText = d.daily.sunset[0].split('T')[1];
                         
                         cloudCoverVal = d.current.cloud_cover;
-                        document.getElementById('r-cloud-percent').innerText = "NUBI: " + cloudCoverVal + "%";
+                        document.getElementById('r-cloud-percent').innerText = cloudCoverVal + "%";
                         
-                        // Il centro del radar diventa più scuro se è nuvoloso
-                        const grayValue = Math.max(15, 30 - (cloudCoverVal/4));
+                        // Gradiente dinamico per il centro
                         document.getElementById('radar-center').style.background = `radial-gradient(circle, #1e293b 0%, #0f172a ${cloudCoverVal}%)`;
                         
                         weatherFactor = Math.max(0.15, (100 - (cloudCoverVal * 0.85)) / 100);
                     }
                 } catch(e) {}
                 update();
-                btn.innerText = "✅ DATI AGGIORNATI";
-                setTimeout(() => btn.innerText = "⚡ SINCRONIZZA DATI CAMPER", 2000);
+                btn.innerText = "✅ SISTEMA AGGIORNATO";
+                setTimeout(() => btn.innerText = "⚡ SINCRONIZZA RADAR", 2000);
             });
         }
     }
@@ -233,14 +236,12 @@
         if (sAltDeg > 0) {
             celestial.innerText = "☀️";
             document.getElementById('r-icon-center').innerText = (cloudCoverVal > 30) ? "⛅" : "☀️";
-            document.getElementById('r-status').innerText = "PRODUZIONE";
             const yield = Math.max(0, Math.cos((Math.PI/2) - sAltRad - (tilt * Math.PI/180))) * weatherFactor;
             document.getElementById('w_out').innerText = Math.round(pWatt * yield) + " W";
             document.getElementById('w_out').style.color = "#38bdf8";
         } else {
             celestial.innerText = "🌙";
             document.getElementById('r-icon-center').innerText = "🌙";
-            document.getElementById('r-status').innerText = "NOTTE";
             document.getElementById('w_out').innerText = "0 W";
             document.getElementById('w_out').style.color = "#475569";
         }
@@ -248,7 +249,7 @@
         // Report
         const chart = document.getElementById('chart'); chart.innerHTML = "";
         let totalWh = 0;
-        for (let i = 6; i <= 20; i++) {
+        for (let i = 6; i <= 21; i++) {
             const sim = new Date(now); sim.setHours(i, 0, 0);
             const alt = getSunAlt(sim, lat, lon);
             let wh = 0;
@@ -256,7 +257,7 @@
                 wh = pWatt * Math.max(0, Math.cos((Math.PI/2) - alt - (tilt * Math.PI/180))) * weatherFactor;
                 totalWh += wh;
             }
-            chart.innerHTML += `<div style="flex:1; display:flex; flex-direction:column; align-items:center; height:100%"><div style="width:70%; background:#38bdf8; height:${(wh/(pWatt||1))*100}%; border-radius:2px"></div><span style="font-size:7px; color:#94a3b8; margin-top:4px">${i}</span></div>`;
+            chart.innerHTML += `<div style="flex:1; display:flex; flex-direction:column; align-items:center; height:100%"><div style="width:75%; background:#38bdf8; height:${(wh/(pWatt||1))*100}%; border-radius:3px"></div><span style="font-size:8px; color:#94a3b8; margin-top:5px; font-weight:bold">${i}</span></div>`;
         }
         document.getElementById('daily_wh').innerText = Math.round(totalWh) + " Wh";
         document.getElementById('daily_ah').innerText = Math.round(totalWh / 12);
