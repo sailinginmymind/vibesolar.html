@@ -3,20 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solar Optimizer Pro</title>
+    <title>Solar Optimizer Pro 2.5</title>
     <style>
         body { margin: 0; background-color: #0f172a; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .box { width: 95%; max-width: 400px; padding: 25px; background: #1e293b; border-radius: 25px; text-align: center; border: 1px solid #334155; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .sun { width: 50px; height: 50px; background: #fbbf24; border-radius: 50%; margin: 0 auto 15px; box-shadow: 0 0 20px #fbbf24; transition: 0.5s; }
         .row { margin-bottom: 15px; text-align: left; }
-        label { font-size: 11px; color: #94a3b8; display: flex; justify-content: space-between; margin-bottom: 5px; font-weight: bold; }
-        input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; font-family: inherit; }
-        input[type="range"] { accent-color: #38bdf8; cursor: pointer; }
-        .btn { width: 100%; padding: 12px; background: #38bdf8; color: #0f172a; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .section-title { font-size: 11px; color: #94a3b8; display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
+        
+        /* Stile per le etichette specifiche degli input */
+        .input-label { font-size: 10px; color: #64748b; margin-bottom: 4px; display: block; }
+        
+        .input-pair { display: flex; gap: 10px; }
+        .input-col { flex: 1; }
+
+        input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; font-family: inherit; font-size: 0.9rem; }
+        input[type="range"] { accent-color: #38bdf8; cursor: pointer; padding: 0; }
+        
+        .btn { width: 100%; padding: 12px; background: #38bdf8; color: #0f172a; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; font-size: 0.75rem; }
         .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .res-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
         b { font-size: 1.2rem; color: #fbbf24; }
         .highlight { color: #38bdf8; }
+        .night { filter: grayscale(1) brightness(0.3); opacity: 0.3; box-shadow: none !important; }
     </style>
 </head>
 <body>
@@ -26,38 +35,53 @@
     <h3 style="margin: 0 0 20px 0; font-size: 16px; letter-spacing: 1px;">SOLAR OPTIMIZER</h3>
 
     <div class="row">
-        <label>DATA E ORA</label>
-        <div style="display: flex; gap: 5px;">
-            <input type="date" id="d_val">
-            <input type="time" id="t_val">
+        <span class="section-title">Data e Ora di Analisi</span>
+        <div class="input-pair">
+            <div class="input-col">
+                <span class="input-label">Giorno</span>
+                <input type="date" id="d_val">
+            </div>
+            <div class="input-col">
+                <span class="input-label">Ora Locale</span>
+                <input type="time" id="t_val">
+            </div>
         </div>
     </div>
 
     <div class="row">
-        <label>POSIZIONE <span id="gps_status" class="highlight">MANUALE</span></label>
-        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
-            <input type="number" id="la_val" step="0.01" placeholder="Lat">
-            <input type="number" id="lo_val" step="0.01" placeholder="Lon">
+        <span class="section-title">Coordinate Geografiche <span id="gps_status" class="highlight"></span></span>
+        <div class="input-pair">
+            <div class="input-col">
+                <span class="input-label">Latitudine (N/S)</span>
+                <input type="number" id="la_val" step="0.0001" placeholder="Es: 41.89">
+            </div>
+            <div class="input-col">
+                <span class="input-label">Longitudine (E/W)</span>
+                <input type="number" id="lo_val" step="0.0001" placeholder="Es: 12.49">
+            </div>
         </div>
-        <button class="btn" onclick="askGPS()">USA GPS ATTUALE</button>
+        <button class="btn" onclick="askGPS()">📍 Rileva Posizione GPS</button>
     </div>
 
     <div class="row" style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 15px;">
-        <label>
-            INCLINAZIONE PANNELLO (TILT)
+        <span class="section-title">
+            Inclinazione Pannello
             <span class="highlight" id="tilt_display">30°</span>
-        </label>
+        </span>
         <input type="range" id="tilt_range" min="0" max="90" value="30">
-        <small style="font-size: 9px; color: #64748b; display: block; margin-top: 5px;">0° = Piatto al suolo | 90° = Verticale</small>
+        <div style="display: flex; justify-content: space-between; font-size: 9px; color: #64748b; margin-top: 5px;">
+            <span>0° (Piatto)</span>
+            <span>90° (Muro)</span>
+        </div>
     </div>
 
     <div class="res-grid">
         <div class="res-item">
-            <label>RESA STIMATA</label>
+            <span class="section-title" style="justify-content: center;">Resa Stimata</span>
             <b id="y_out">--</b>
         </div>
         <div class="res-item">
-            <label>ALTEZZA SOLE</label>
+            <span class="section-title" style="justify-content: center;">Altezza Sole</span>
             <b id="a_out">--</b>
         </div>
     </div>
@@ -75,7 +99,6 @@
 
         if (!dv || !tv || isNaN(lat) || isNaN(lon)) return;
 
-        // --- CALCOLI ASTRONOMICI ---
         var dt = new Date(dv + 'T' + tv);
         var day = Math.floor((dt - new Date(dt.getFullYear(), 0, 0)) / 86400000);
         var decl = 0.409 * Math.sin((2 * Math.PI / 365) * (day - 81));
@@ -84,7 +107,6 @@
         var ha = (sol - 12) * 15 * (Math.PI / 180);
         var lr = lat * (Math.PI / 180);
 
-        // Altezza del sole (alpha)
         var sa = Math.sin(lr) * Math.sin(decl) + Math.cos(lr) * Math.cos(decl) * Math.cos(ha);
         var sunAltRad = Math.asin(sa);
         var sunAltDeg = sunAltRad * (180 / Math.PI);
@@ -92,41 +114,34 @@
         var viz = document.getElementById('sun_viz');
         
         if (sunAltDeg > 0) {
-            // --- CALCOLO RESA CON TILT ---
-            // L'angolo di incidenza ottimale è quando Tilt = 90 - sunAlt
-            // La resa segue il coseno dell'angolo tra raggio e normale al pannello
             var tiltRad = tilt * (Math.PI / 180);
-            
-            // Formula semplificata per pannello rivolto a SUD:
-            // Resa = cos(90 - sunAlt - tilt)
             var incidence = Math.cos((Math.PI/2) - sunAltRad - tiltRad);
             var yield = Math.round(Math.max(0, incidence) * 100);
 
             document.getElementById('a_out').innerText = Math.round(sunAltDeg) + "°";
             document.getElementById('y_out').innerText = yield + "%";
-            viz.style.background = "#fbbf24";
+            viz.className = "sun";
             viz.style.opacity = "1";
             viz.style.boxShadow = "0 0 " + (yield/2) + "px #fbbf24";
         } else {
             document.getElementById('a_out').innerText = "NOTTE";
             document.getElementById('y_out').innerText = "0%";
-            viz.style.background = "#444";
-            viz.style.opacity = "0.3";
-            viz.style.boxShadow = "none";
+            viz.className = "sun night";
         }
     }
 
     function askGPS() {
         if (navigator.geolocation) {
-            document.getElementById('gps_status').innerText = "RILEVAMENTO...";
+            var status = document.getElementById('gps_status');
+            status.innerText = "(...ING)";
             navigator.geolocation.getCurrentPosition(function(p) {
                 document.getElementById('la_val').value = p.coords.latitude.toFixed(4);
                 document.getElementById('lo_val').value = p.coords.longitude.toFixed(4);
-                document.getElementById('gps_status').innerText = "GPS ATTIVO";
+                status.innerText = "(OK)";
                 update();
             }, function() { 
-                alert("GPS negato. Inserisci i dati manualmente.");
-                document.getElementById('gps_status').innerText = "ERRORE";
+                alert("GPS non disponibile. Inserisci manualmente.");
+                status.innerText = "(OFF)";
             });
         }
     }
@@ -135,12 +150,11 @@
         var n = new Date();
         document.getElementById('d_val').value = n.toISOString().split('T')[0];
         document.getElementById('t_val').value = n.toTimeString().slice(0,5);
-        document.getElementById('la_val').value = "41.89";
-        document.getElementById('lo_val').value = "12.49";
+        document.getElementById('la_val').value = "41.8902";
+        document.getElementById('lo_val').value = "12.4922";
         
-        // Collega tutti gli input alla funzione update
-        const inputs = ['d_val', 't_val', 'la_val', 'lo_val', 'tilt_range'];
-        inputs.forEach(id => document.getElementById(id).oninput = update);
+        const ids = ['d_val', 't_val', 'la_val', 'lo_val', 'tilt_range'];
+        ids.forEach(id => document.getElementById(id).oninput = update);
         
         update();
     };
