@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vibe Solar - Full Version</title>
+    <title>Vibe Solar - Interactive Report</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
@@ -22,7 +22,7 @@
         
         .source-banner { background: rgba(56, 189, 248, 0.1); border: 1px dashed #38bdf8; border-radius: 12px; padding: 10px; margin-bottom: 15px; font-size: 10px; color: #38bdf8; text-align: center; }
 
-        .btn-live { padding: 18px; background: #fbbf24; color: #0f172a; border: none; border-radius: 14px; font-weight: 900; cursor: pointer; font-size: 13px; width: 100%; margin-bottom: 15px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.2); }
+        .btn-live { padding: 18px; background: #fbbf24; color: #0f172a; border: none; border-radius: 14px; font-weight: 900; cursor: pointer; font-size: 13px; width: 100%; margin-bottom: 15px; text-transform: uppercase; }
         .btn-calc { background: #38bdf8; color: #0f172a; border: none; border-radius: 10px; min-width: 45px; cursor: pointer; font-weight: 900; font-size: 18px; display: flex; align-items: center; justify-content: center; }
 
         /* RADAR RESTORED */
@@ -52,6 +52,13 @@
         .batt-edit { background: none; border: 1px solid #38bdf8; color: #38bdf8; border-radius: 6px; padding: 3px 10px; font-size: 10px; cursor: pointer; }
         .charge-time { font-size: 24px; color: #38bdf8; font-weight: 900; display: block; }
 
+        /* GRAPH INTERACTION */
+        .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; position: relative; cursor: pointer; }
+        .bar { width: 75%; background: #38bdf8; border-radius: 2px; transition: background 0.2s; position: relative; }
+        .bar:hover, .bar:active { background: #fbbf24; }
+        .bar-value { position: absolute; top: -18px; font-size: 9px; color: #fbbf24; font-weight: 900; opacity: 0; transition: opacity 0.2s; white-space: nowrap; }
+        .bar-container:hover .bar-value, .bar-container:active .bar-value { opacity: 1; }
+
         /* INPUTS */
         .input-row { display: flex; gap: 8px; width: 100%; margin-bottom: 10px; }
         input { border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 14px; font-weight: bold; padding: 12px; width: 100%; outline: none; }
@@ -77,20 +84,14 @@
                 <div class="radar-info pos-12"><span class="radar-label">VENTO</span><span class="radar-val" id="r-wind">--</span></div>
                 <div class="radar-info pos-16"><span class="radar-label">UMIDITÀ</span><span class="radar-val" id="r-hum">--</span></div>
                 <div class="radar-info pos-20"><span class="radar-label">TEMP.</span><span class="radar-val" id="r-temp">--</span></div>
-                
                 <div class="sky-orbit"><div id="celestial-body">☀️</div></div>
-                <div class="horizon-line">
-                    <span class="horizon-label" style="left:5px">ALBA</span>
-                    <span class="horizon-label" style="right:5px">TRAMONTO</span>
-                </div>
-
+                <div class="horizon-line"><span class="horizon-label" style="left:5px">ALBA</span><span class="horizon-label" style="right:5px">TRAMONTO</span></div>
                 <div id="radar-center" class="radar-circle">
                     <span id="r-icon-center" style="font-size:48px">☀️</span>
                     <span id="r-cloud-percent" style="font-size: 16px; color: white; font-weight: 900; margin-top:5px;">--%</span>
                     <span class="radar-label" style="font-size: 8px;">NUBI</span>
                 </div>
             </div>
-
             <span id="w_out" class="big-w">0 W</span>
             <div class="grid-2" style="border-top: 1px solid #334155; padding-top: 15px; margin-top:10px; text-align: center;">
                 <div><small class="section-title">Alba</small><b id="sunrise-txt" style="font-size:18px; color:#fbbf24">--:--</b></div>
@@ -107,13 +108,11 @@
 
     <div id="view-energy" class="view">
         <div id="source-info" class="source-banner">Dati non sincronizzati. Torna nel Radar e premi LIVE.</div>
-
         <div class="card" style="text-align: center;">
             <span class="section-title">Produzione Giornaliera</span>
             <span style="font-size: 42px; color: #fbbf24; font-weight: 900;" id="daily_wh">0 Wh</span>
-            <div id="chart" style="display:flex; align-items:flex-end; justify-content:space-between; height:100px; margin-top:20px; border-bottom:2px solid #334155; padding-bottom: 5px;"></div>
+            <div id="chart" style="display:flex; align-items:flex-end; justify-content:space-between; height:120px; margin-top:25px; border-bottom:2px solid #334155; padding-bottom: 5px;"></div>
         </div>
-
         <div class="card">
             <span class="section-title">Stima Ricarica</span>
             <div class="battery-box">
@@ -129,7 +128,6 @@
                 </div>
             </div>
         </div>
-
         <div class="card">
             <span class="section-title">Configurazione Camper</span>
             <div class="grid-2">
@@ -167,18 +165,11 @@
         const n = new Date();
         document.getElementById('d_val').value = n.toISOString().split('T')[0];
         document.getElementById('t_val').value = n.toTimeString().slice(0,5);
-
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(async (p) => {
                 const lat = p.coords.latitude.toFixed(4), lon = p.coords.longitude.toFixed(4);
-                document.getElementById('la_val').value = lat; 
-                document.getElementById('lo_val').value = lon;
-                lastSyncInfo = { 
-                    city: `Lat: ${lat}, Lon: ${lon}`, 
-                    time: n.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                    date: n.toLocaleDateString([], {day: '2-digit', month:'short'}),
-                    cloud: 0
-                };
+                document.getElementById('la_val').value = lat; document.getElementById('lo_val').value = lon;
+                lastSyncInfo = { city: `${lat},${lon}`, time: n.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), date: n.toLocaleDateString([], {day:'2-digit', month:'short'}), cloud: 0 };
                 await fetchFullData(lat, lon, document.getElementById('d_val').value, true);
                 btn.innerText = "✅ SISTEMA LIVE";
                 setTimeout(() => btn.innerText = "📡 MODALITÀ LIVE (ORA/GPS)", 2000);
@@ -224,7 +215,6 @@
         if(!dv || !tv) return;
 
         document.getElementById('source-info').innerText = `Dati: Cielo ${lastSyncInfo.cloud}% nubi | Rilevato il ${lastSyncInfo.date} alle ${lastSyncInfo.time}`;
-
         const now = new Date(dv + 'T' + tv);
         let totalWh = 0;
         const chart = document.getElementById('chart'); chart.innerHTML = "";
@@ -237,12 +227,16 @@
                 wh = pWatt * Math.max(0, Math.cos((Math.PI/2) - alt - (tilt * Math.PI/180))) * weatherFactor;
                 totalWh += wh;
             }
-            // Grafico con ore
-            chart.innerHTML += `<div style="flex:1; display:flex; flex-direction:column; align-items:center; height:100%"><div style="width:70%; background:#38bdf8; height:${(wh/(pWatt||1))*100}%; border-radius:2px"></div><span style="font-size:8px; color:#94a3b8; margin-top:4px">${i}</span></div>`;
+            // Creazione barra interattiva
+            chart.innerHTML += `
+                <div class="bar-container">
+                    <span class="bar-value">${Math.round(wh)}W</span>
+                    <div class="bar" style="height:${(wh/(pWatt||1))*100}%"></div>
+                    <span style="font-size:8px; color:#94a3b8; margin-top:4px">${i}</span>
+                </div>`;
         }
         document.getElementById('daily_wh').innerText = Math.round(totalWh) + " Wh";
         
-        // Stima Ricarica
         const totalAh = totalWh / 12.5;
         if (totalAh > 0) {
             if (totalAh >= batteryAh) {
