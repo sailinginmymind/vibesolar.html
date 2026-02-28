@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vibe Solar - Precision Dashboard</title>
+    <title>Vibe Solar - High Visibility</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
@@ -21,43 +21,36 @@
         .card { background: #1e293b; border-radius: 24px; padding: 20px; border: 1px solid #334155; margin-bottom: 15px; position: relative; }
         .section-title { font-size: 11px; color: #94a3b8; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 10px; letter-spacing: 1px; }
         
-        .btn-live { padding: 18px; background: #fbbf24; color: #0f172a; border: none; border-radius: 14px; font-weight: 900; cursor: pointer; font-size: 13px; width: 100%; margin-bottom: 15px; text-transform: uppercase; }
+        /* RADAR - HIGH VISIBILITY */
+        .radar-container { position: relative; width: 320px; height: 320px; margin: 15px auto; display: flex; align-items: center; justify-content: center; }
+        .sky-orbit { position: absolute; width: 240px; height: 240px; border-radius: 50%; border: 2px solid rgba(56, 189, 248, 0.15); }
+        .horizon-line { position: absolute; width: 300px; height: 2px; background: linear-gradient(90deg, transparent, #fbbf24, transparent); top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1; }
+        .horizon-label { position: absolute; font-size: 11px; color: #fbbf24; font-weight: 900; top: -22px; text-transform: uppercase; line-height: 1.2; }
+        
+        .radar-circle { width: 145px; height: 145px; border-radius: 50%; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 4px solid #334155; z-index: 4; }
+        .big-w { font-size: 54px; font-weight: 900; margin: 5px 0; display: block; text-align: center; cursor: pointer; transition: color 0.3s; line-height: 1; }
+        
+        .radar-info { position: absolute; color: #94a3b8; font-weight: bold; text-align: center; width: 90px; z-index: 3; }
+        .radar-label { font-size: 11px; color: #38bdf8; display: block; margin-bottom: 2px; letter-spacing: 1px; }
+        .radar-val { display: block; color: white; font-size: 24px; font-weight: 900; } /* Font più grande */
+        .pos-12 { top: -35px; left: 50%; transform: translateX(-50%); } 
+        .pos-16 { bottom: -5px; right: -25px; }
+        .pos-20 { bottom: -5px; left: -25px; }
+
+        /* REPORT */
+        .recharge-main { font-size: 42px; color: #38bdf8; font-weight: 900; display: block; margin: 10px 0; }
+        .recharge-secondary { display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #334155; margin-top: 15px; }
+
+        /* INPUTS & OTHERS */
+        .btn-live { padding: 18px; background: #fbbf24; color: #0f172a; border: none; border-radius: 14px; font-weight: 900; cursor: pointer; width: 100%; margin-bottom: 15px; text-transform: uppercase; }
         .btn-calc { background: #38bdf8; color: #0f172a; border: none; border-radius: 10px; min-width: 45px; cursor: pointer; font-weight: 900; }
-
-        /* RADAR */
-        .radar-container { position: relative; width: 300px; height: 300px; margin: 10px auto; display: flex; align-items: center; justify-content: center; }
-        .sky-orbit { position: absolute; width: 230px; height: 230px; border-radius: 50%; border: 2px solid rgba(56, 189, 248, 0.15); }
-        .horizon-line { position: absolute; width: 270px; height: 2px; background: linear-gradient(90deg, transparent, #fbbf24, transparent); top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1; }
-        .horizon-label { position: absolute; font-size: 9px; color: #fbbf24; font-weight: 900; top: -18px; text-transform: uppercase; }
-        
-        .radar-circle { width: 135px; height: 135px; border-radius: 50%; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 4px solid #334155; z-index: 2; }
-        .big-w { font-size: 52px; font-weight: 900; margin: 5px 0; display: block; text-align: center; cursor: pointer; transition: color 0.3s; }
-        
-        .radar-info { position: absolute; color: #94a3b8; font-weight: bold; text-align: center; width: 80px; z-index: 3; }
-        .radar-label { font-size: 10px; color: #38bdf8; display: block; margin-bottom: 2px; }
-        .radar-val { display: block; color: white; font-size: 18px; font-weight: 900; }
-        .pos-12 { top: -25px; left: 50%; transform: translateX(-50%); } 
-        .pos-16 { bottom: 10px; right: -20px; }
-        .pos-20 { bottom: 10px; left: -20px; }
-
-        /* REPORT ESTIMATES */
-        .recharge-main { font-size: 38px; color: #38bdf8; font-weight: 900; display: block; line-height: 1; margin: 10px 0; }
-        .recharge-secondary { font-size: 14px; color: #94a3b8; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #334155; margin-top: 10px; }
+        input { border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; padding: 12px; width: 100%; outline: none; font-size: 14px; font-weight: bold; }
+        .input-row { display: flex; gap: 8px; margin-bottom: 8px; }
 
         /* CHART */
         #chart { display:flex; align-items:flex-end; justify-content:space-between; height:100px; margin-top:20px; border-bottom:1px solid #334155; padding-bottom: 5px; }
         .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; position: relative; }
         .bar { width: 70%; background: #38bdf8; border-radius: 2px 2px 0 0; }
-        .bar-val-pop { position: absolute; top: -20px; font-size: 9px; color: #fbbf24; font-weight: 900; opacity: 0; }
-        .bar-container:active .bar { background: #fbbf24; }
-        .bar-container:active .bar-val-pop { opacity: 1; }
-
-        /* TILT COMPACT */
-        .tilt-box { background: #0f172a; border-radius: 12px; padding: 10px 15px; border: 1px solid #334155; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
-
-        /* INPUTS */
-        input { border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; padding: 12px; width: 100%; outline: none; font-size: 14px; font-weight: bold; }
-        .input-row { display: flex; gap: 8px; margin-bottom: 8px; }
 
         /* NAVBAR */
         .navbar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; height: 80px; background: #1e293b; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #334155; z-index: 1000; }
@@ -68,35 +61,35 @@
 <body>
 
 <div class="app-container">
-    <h2>VIBE SOLAR</h2>
+    <h2 onclick="location.reload()" style="cursor:pointer">VIBE SOLAR</h2>
     <span id="camper-name-display">IL MIO CAMPER</span>
 
     <div id="view-live" class="view active">
-        <button id="main-sync" class="btn-live" onclick="goLive()">📡 MODALITÀ LIVE (ORA/GPS)</button>
+        <button id="main-sync" class="btn-live" onclick="goLive()">📡 AGGIORNA LIVE (GPS)</button>
         <div class="card">
             <div class="radar-container">
                 <div class="radar-info pos-12"><span class="radar-label">VENTO</span><span class="radar-val" id="r-wind">--</span></div>
                 <div class="radar-info pos-16"><span class="radar-label">UMIDITÀ</span><span class="radar-val" id="r-hum">--</span></div>
                 <div class="radar-info pos-20"><span class="radar-label">TEMP.</span><span class="radar-val" id="r-temp">--</span></div>
                 
-                <div class="sky-orbit"><div id="celestial-body" style="position: absolute; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; top: 50%; left: 50%; margin-top: -20px; margin-left: -20px; z-index: 10; font-size: 32px; transition: transform 0.5s;">☀️</div></div>
+                <div class="sky-orbit"><div id="celestial-body" style="position: absolute; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; top: 50%; left: 50%; margin-top: -22.5px; margin-left: -22.5px; z-index: 10; font-size: 38px; transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);">☀️</div></div>
                 
                 <div class="horizon-line">
-                    <span class="horizon-label" style="left:5px">Alba <br><small id="sunrise-txt" style="color:white">--:--</small></span>
-                    <span class="horizon-label" style="right:5px; text-align:right">Tramonto <br><small id="sunset-txt" style="color:white">--:--</small></span>
+                    <span class="horizon-label" style="left:5px">ALBA <br><span id="sunrise-txt" style="color:white; font-size:16px">--:--</span></span>
+                    <span class="horizon-label" style="right:5px; text-align:right">TRAMONTO <br><span id="sunset-txt" style="color:white; font-size:16px">--:--</span></span>
                 </div>
 
                 <div class="radar-circle">
                     <span id="r-icon-center" style="font-size:48px">☀️</span>
-                    <span id="r-cloud-percent" style="font-size: 16px; color: white; font-weight: 900; margin-top:5px;">--%</span>
-                    <span class="radar-label" style="font-size: 8px;">NUBI</span>
+                    <span id="r-cloud-percent" style="font-size: 20px; color: white; font-weight: 900;">--%</span>
+                    <span class="radar-label" style="font-size: 9px;">COPERTURA</span>
                 </div>
             </div>
             <span id="w_out" class="big-w" onclick="toggleRadarUnit()" style="color: #38bdf8;">0 W</span>
-            <span style="display:block; text-align:center; font-size:9px; color:#94a3b8; margin-top:-10px;">Tocca per W (Azzurro) / Wh (Oro)</span>
+            <span id="unit-hint" style="display:block; text-align:center; font-size:10px; color:#94a3b8; margin-top:-5px; font-weight:bold;">Tocca per W/Wh</span>
         </div>
         <div class="card">
-            <span class="section-title">Parametri Simulazione</span>
+            <span class="section-title">Impostazioni Manuali</span>
             <div class="input-row"><input type="date" id="d_val"><input type="time" id="t_val"><button class="btn-calc" onclick="syncSpecificDate()">🔍</button></div>
             <div class="input-row"><input type="number" id="la_val" step="0.0001" placeholder="Latitudine"><input type="number" id="lo_val" step="0.0001" placeholder="Longitudine"></div>
         </div>
@@ -104,48 +97,41 @@
 
     <div id="view-energy" class="view">
         <div class="card" style="text-align:center;">
-            <span class="section-title">Previsione Ricarica (da 50%)</span>
+            <span class="section-title" style="color:#fbbf24">Stima Ricarica (da 50% SOC)</span>
             <span class="recharge-main" id="charge_100_txt">--:--</span>
-            <small style="color:#94a3b8">mancano alla carica 100%</small>
+            <small style="color:#94a3b8; font-weight:bold; text-transform:uppercase;">mancano alla carica 100%</small>
             
             <div class="recharge-secondary">
-                <div><small class="radar-label">AL 90%</small><b id="charge_90_txt" style="color:white">--</b></div>
-                <div><small class="radar-label">AL 80%</small><b id="charge_80_txt" style="color:white">--</b></div>
+                <div><small class="radar-label">AL 90%</small><b id="charge_90_txt" style="color:white; font-size:22px;">--</b></div>
+                <div><small class="radar-label">AL 80%</small><b id="charge_80_txt" style="color:white; font-size:22px;">--</b></div>
             </div>
         </div>
 
         <div class="card">
-            <div class="tilt-box">
-                <div style="flex:1"><span class="section-title" style="margin:0">Tilt: <b id="tilt_txt" style="color:#38bdf8">0°</b></span></div>
+            <div style="background: #0f172a; border-radius:12px; padding:12px; border:1px solid #334155; display:flex; align-items:center; gap:15px; margin-bottom:10px;">
+                <span class="section-title" style="margin:0; flex:1">TILT: <b id="tilt_txt" style="color:#38bdf8">0°</b></span>
                 <input type="range" id="tilt_range" min="0" max="90" value="0" oninput="update()" style="flex:2; margin:0">
             </div>
             <div id="chart"></div>
-        </div>
-
-        <div class="card">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; text-align:center;">
-                <div><small class="radar-label">PRODUZIONE</small><b id="daily_wh" style="font-size:20px; color:#fbbf24">0 Wh</b></div>
-                <div><small class="radar-label">CONSUMO</small><b id="daily_cons" style="font-size:20px; color:#ef4444">0 Wh</b></div>
-            </div>
         </div>
     </div>
 
     <div id="view-garage" class="view">
         <div class="card">
-            <span class="section-title">Hardware</span>
-            <input type="text" id="camper_name_input" placeholder="Nome Camper" onchange="saveGarage()">
-            <div style="margin-top:15px; display:grid; gap:10px;">
-                <div style="background:#0f172a; padding:12px; border-radius:12px; border:1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
-                    <span class="section-title" style="margin:0">Batteria: <b id="batt_cap_display" style="color:#fbbf24">100</b> Ah</span>
-                    <button class="btn-calc" style="font-size:10px; padding:5px 10px;" onclick="changeBattery()">EDIT</button>
+            <span class="section-title">Profilo Camper</span>
+            <input type="text" id="camper_name_input" placeholder="Nome del Veicolo" onchange="saveGarage()">
+            <div style="margin-top:15px; display:grid; gap:12px;">
+                <div style="background:#0f172a; padding:15px; border-radius:16px; border:1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
+                    <div><span class="section-title" style="margin:0">Capacità Batteria</span><br><b style="font-size:20px; color:#fbbf24" id="batt_cap_display">100</b> <small>Ah</small></div>
+                    <button class="btn-calc" style="font-size:11px; padding:8px 12px;" onclick="changeBattery()">EDIT</button>
                 </div>
-                <div style="background:#0f172a; padding:12px; border-radius:12px; border:1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
-                    <span class="section-title" style="margin:0">Pannelli: <b id="panel_wp_display" style="color:#fbbf24">100</b> Wp</span>
-                    <button class="btn-calc" style="font-size:10px; padding:5px 10px;" onclick="changePanels()">EDIT</button>
+                <div style="background:#0f172a; padding:15px; border-radius:16px; border:1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
+                    <div><span class="section-title" style="margin:0">Potenza Pannelli</span><br><b style="font-size:20px; color:#fbbf24" id="panel_wp_display">100</b> <small>Wp</small></div>
+                    <button class="btn-calc" style="font-size:11px; padding:8px 12px;" onclick="changePanels()">EDIT</button>
                 </div>
-                <div style="background:#0f172a; padding:12px; border-radius:12px; border:1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
-                    <span class="section-title" style="margin:0">Consumo: <b id="base_load_display" style="color:#fbbf24">0.5</b> A</span>
-                    <button class="btn-calc" style="font-size:10px; padding:5px 10px;" onclick="changeLoad()">EDIT</button>
+                <div style="background:#0f172a; padding:15px; border-radius:16px; border:1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
+                    <div><span class="section-title" style="margin:0">Consumo Fisso</span><br><b style="font-size:20px; color:#fbbf24" id="base_load_display">0.5</b> <small>A</small></div>
+                    <button class="btn-calc" style="font-size:11px; padding:8px 12px;" onclick="changeLoad()">EDIT</button>
                 </div>
             </div>
         </div>
@@ -171,23 +157,26 @@
     }
 
     function changeBattery() {
-        let val = prompt("Ah Batteria:", batteryAh);
+        let val = prompt("Capacità batteria (Ah):", batteryAh);
         if(val) { batteryAh = val; localStorage.setItem('vibe_batt_ah', val); update(); }
     }
 
     function changePanels() {
-        let val = prompt("Watt Pannelli:", panelWp);
+        let val = prompt("Potenza pannelli (Wp):", panelWp);
         if(val) { panelWp = val; localStorage.setItem('vibe_panel_wp', val); update(); }
     }
 
     function changeLoad() {
-        let val = prompt("Consumo Fisso (A):", baseLoadA);
+        let val = prompt("Consumo costante camper (Ampere):", baseLoadA);
         if(val) { baseLoadA = val; localStorage.setItem('vibe_base_load', val); update(); }
     }
 
     function toggleRadarUnit() { 
         showWhInRadar = !showWhInRadar; 
-        document.getElementById('w_out').style.color = showWhInRadar ? "#fbbf24" : "#38bdf8";
+        const btn = document.getElementById('w_out');
+        const hint = document.getElementById('unit-hint');
+        btn.style.color = showWhInRadar ? "#fbbf24" : "#38bdf8";
+        hint.innerText = showWhInRadar ? "Tocca per W" : "Tocca per W/Wh";
         update(); 
     }
 
@@ -200,13 +189,13 @@
                 document.getElementById('la_val').value = p.coords.latitude.toFixed(4);
                 document.getElementById('lo_val').value = p.coords.longitude.toFixed(4);
                 await fetchFullData(p.coords.latitude, p.coords.longitude, document.getElementById('d_val').value, true);
-            });
+            }, () => syncSpecificDate());
         }
     }
 
     async function syncSpecificDate() {
-        const lat = document.getElementById('la_val').value || 41.89;
-        const lon = document.getElementById('lo_val').value || 12.49;
+        const lat = document.getElementById('la_val').value || 43.71;
+        const lon = document.getElementById('lo_val').value || 10.40;
         await fetchFullData(lat, lon, document.getElementById('d_val').value, false);
     }
 
@@ -218,10 +207,10 @@
                 document.getElementById('sunrise-txt').innerText = d.daily.sunrise[0].split('T')[1];
                 document.getElementById('sunset-txt').innerText = d.daily.sunset[0].split('T')[1];
             }
-            if (isLive && d.current) {
+            if (d.current) {
                 document.getElementById('r-temp').innerText = Math.round(d.current.temperature_2m) + "°";
                 document.getElementById('r-hum').innerText = d.current.relative_humidity_2m + "%";
-                document.getElementById('r-wind').innerText = Math.round(d.current.wind_speed_10m) + "k/h";
+                document.getElementById('r-wind').innerText = Math.round(d.current.wind_speed_10m) + " km/h";
                 cloudCoverVal = d.current.cloud_cover;
                 document.getElementById('r-cloud-percent').innerText = cloudCoverVal + "%";
                 weatherFactor = Math.max(0.1, (100 - cloudCoverVal) / 100);
@@ -232,8 +221,8 @@
 
     function update() {
         const tilt = parseFloat(document.getElementById('tilt_range').value);
-        const lat = parseFloat(document.getElementById('la_val').value) || 41.89;
-        const lon = parseFloat(document.getElementById('lo_val').value) || 12.49;
+        const lat = parseFloat(document.getElementById('la_val').value) || 43.71;
+        const lon = parseFloat(document.getElementById('lo_val').value) || 10.40;
         const dv = document.getElementById('d_val').value, tv = document.getElementById('t_val').value;
         if(!dv || !tv) return;
         const now = new Date(dv + 'T' + tv);
@@ -241,32 +230,27 @@
         let totalWh = 0, cumulativeWh = 0;
         const chart = document.getElementById('chart'); chart.innerHTML = "";
         
-        for (let i = 6; i <= 20; i++) {
+        for (let i = 5; i <= 21; i++) {
             const sim = new Date(now); sim.setHours(i, 0, 0);
             const alt = getSunAlt(sim, lat, lon);
             let w = (alt > 0) ? panelWp * Math.max(0, Math.cos((Math.PI/2) - alt - (tilt * Math.PI/180))) * weatherFactor : 0;
             totalWh += w;
             if (i <= now.getHours()) cumulativeWh += w;
-            chart.innerHTML += `<div class="bar-container"><span class="bar-val-pop">${Math.round(w)}W</span><div class="bar" style="height:${(w/panelWp)*100}px"></div><small style="font-size:7px; margin-top:3px; color:#94a3b8">${i}</small></div>`;
+            chart.innerHTML += `<div class="bar-container"><span class="bar" style="height:${(w/panelWp)*100}px"></span><small style="font-size:7px; margin-top:3px; color:#94a3b8">${i}</small></div>`;
         }
 
         const currentAlt = getSunAlt(now, lat, lon);
         const curW = (currentAlt > 0) ? panelWp * Math.max(0, Math.cos((Math.PI/2) - currentAlt - (tilt * Math.PI/180))) * weatherFactor : 0;
         document.getElementById('w_out').innerText = showWhInRadar ? Math.round(cumulativeWh) + " Wh" : Math.round(curW) + " W";
-        document.getElementById('celestial-body').style.transform = `rotate(${(now.getHours()*15)-180}deg) translateY(-115px) rotate(${-((now.getHours()*15)-180)}deg)`;
-
-        document.getElementById('daily_wh').innerText = Math.round(totalWh) + " Wh";
-        const dailyConsWh = baseLoadA * 12 * 24; 
-        document.getElementById('daily_cons').innerText = Math.round(dailyConsWh) + " Wh";
+        
+        const sunPos = (now.getHours() + now.getMinutes()/60) * 15 - 180;
+        document.getElementById('celestial-body').style.transform = `rotate(${sunPos}deg) translateY(-120px) rotate(${-sunPos}deg)`;
 
         const netAmps = (curW / 12.8) - baseLoadA;
         if (netAmps > 0) {
-            const h100 = (batteryAh * 0.5) / netAmps;
-            const h90 = (batteryAh * 0.4) / netAmps;
-            const h80 = (batteryAh * 0.3) / netAmps;
-            document.getElementById('charge_100_txt').innerText = h100 > 12 ? "+12h" : h100.toFixed(1) + "h";
-            document.getElementById('charge_90_txt').innerText = h90.toFixed(1) + "h";
-            document.getElementById('charge_80_txt').innerText = h80.toFixed(1) + "h";
+            document.getElementById('charge_100_txt').innerText = ((batteryAh*0.5)/netAmps).toFixed(1) + "h";
+            document.getElementById('charge_90_txt').innerText = ((batteryAh*0.4)/netAmps).toFixed(1) + "h";
+            document.getElementById('charge_80_txt').innerText = ((batteryAh*0.3)/netAmps).toFixed(1) + "h";
         } else {
             document.getElementById('charge_100_txt').innerText = "---";
             document.getElementById('charge_90_txt').innerText = "---";
@@ -282,7 +266,7 @@
     function getSunAlt(dateObj, lat, lon) {
         const day = Math.floor((dateObj - new Date(dateObj.getFullYear(), 0, 0)) / 86400000);
         const decl = 0.409 * Math.sin((2 * Math.PI / 365) * (day - 81));
-        const ha = (dateObj.getHours() - 12 + (lon-15)/15) * 15 * (Math.PI/180);
+        const ha = (dateObj.getHours() - 12) * 15 * (Math.PI/180);
         return Math.asin(Math.sin(lat*(Math.PI/180))*Math.sin(decl) + Math.cos(lat*(Math.PI/180))*Math.cos(decl)*Math.cos(ha));
     }
 
@@ -295,9 +279,9 @@
     }
 
     window.onload = () => {
-        let savedName = localStorage.getItem('vibe_camper_name') || "IL MIO CAMPER";
-        document.getElementById('camper_name_input').value = savedName;
-        document.getElementById('camper-name-display').innerText = savedName.toUpperCase();
+        let name = localStorage.getItem('vibe_camper_name') || "IL MIO CAMPER";
+        document.getElementById('camper_name_input').value = name;
+        document.getElementById('camper-name-display').innerText = name.toUpperCase();
         goLive();
     };
 </script>
