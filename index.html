@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vibe Solar - Full Experience</title>
+    <title>Vibe Solar - Final Control</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; background-color: #0f172a; color: white; font-family: sans-serif; display: flex; justify-content: center; min-height: 100vh; padding-bottom: 140px; }
@@ -13,48 +13,53 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; } }
 
         h2 { margin: 10px 0 5px 0; letter-spacing: 4px; color: #38bdf8; text-align: center; font-size: 1.8rem; font-weight: 900; }
-        .card { background: #1e293b; border-radius: 28px; padding: 25px; border: 1px solid #334155; margin-bottom: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
+        .card { background: #1e293b; border-radius: 28px; padding: 25px; border: 1px solid #334155; margin-bottom: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); position: relative; overflow: hidden; transition: filter 1s ease; }
         
-        /* RADAR SOLARE & NOTTE */
+        /* RADAR SOLARE E NOTTE */
         .solar-system { 
             position: relative; height: 260px; width: 100%; margin: 10px 0; 
             display: flex; justify-content: center; overflow: hidden; border-radius: 20px;
-            background: #1e293b; transition: background 1s;
+            background: #1e293b; transition: all 1s ease;
         }
-        .is-night { background: #020617 !important; }
-        #stars-container { position: absolute; width: 100%; height: 100%; top: 0; opacity: 0; transition: opacity 1s; }
-        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 2s infinite; }
-        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        
+        .is-night-sky { background: #020617 !important; }
+        .is-night-card { filter: brightness(0.7) saturate(0.8); }
+
+        #stars-container { position: absolute; width: 100%; height: 100%; top: 0; opacity: 0; transition: opacity 1.5s; pointer-events: none; }
+        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 3s infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
 
         #sun-body { 
-            position: absolute; width: 155px; height: 155px; 
+            position: absolute; width: 150px; height: 150px; 
             background: radial-gradient(circle, #fbbf24 20%, #f59e0b 60%, #ea580c 100%); 
-            border-radius: 50%; z-index: 2; box-shadow: 0 0 40px #fbbf24; 
+            border-radius: 50%; z-index: 2; box-shadow: 0 0 50px #fbbf24; 
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform: translate(-50%, -50%); 
         }
 
-        .horizon-mask { position: absolute; bottom: 0; left: 0; right: 0; height: 75px; background: #1e293b; z-index: 4; border-top: 3px solid #fbbf24; }
-        .is-night .horizon-mask { background: #020617; }
-        .horizon-data { position: absolute; bottom: 10px; width: 100%; display: flex; justify-content: space-between; z-index: 6; padding: 0 20px; }
-        .h-label { font-size: 9px; color: #fbbf24; font-weight: 900; text-align: center; }
+        .horizon-mask { position: absolute; bottom: 0; left: 0; right: 0; height: 75px; background: #1e293b; z-index: 4; border-top: 3px solid #fbbf24; transition: background 1s; }
+        .is-night-sky .horizon-mask { background: #020617; }
+
+        .horizon-data { position: absolute; bottom: 12px; width: 100%; display: flex; justify-content: space-between; z-index: 6; padding: 0 20px; }
+        .h-label { font-size: 9px; color: #fbbf24; font-weight: 900; text-shadow: 0 1px 2px black; }
 
         .core-display { position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%); background: #0f172a; border: 4px solid #334155; width: 105px; height: 105px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5; }
 
+        /* DISPLAY WATT / WH CLICCABILE */
+        .big-w { font-size: 60px; font-weight: 900; color: #38bdf8; text-align: center; display: block; margin: 10px 0; cursor: pointer; transition: color 0.3s; user-select: none; }
+        .big-w.unit-wh { color: #fbbf24; }
+
+        .btn-live { padding: 15px; background: #fbbf24; color: #0f172a; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; width: 100%; margin-bottom: 15px; transition: 0.3s; text-transform: uppercase; }
+        .btn-live.success { background: #22c55e !important; color: white !important; }
+
         .manual-controls { background: #0f172a; padding: 15px; border-radius: 20px; margin-top: 15px; border: 1px solid #334155; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .input-group label { display: block; font-size: 9px; color: #38bdf8; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; }
+        .input-group label { display: block; font-size: 9px; color: #38bdf8; font-weight: 900; margin-bottom: 5px; }
         .manual-input { background: #1e293b; color: white; border: 1px solid #334155; padding: 10px; border-radius: 10px; font-size: 14px; width: 100%; font-weight: bold; }
-        
-        .big-w { font-size: 60px; font-weight: 900; color: #38bdf8; text-align: center; display: block; margin: 10px 0; }
-        
-        /* PULSANTE GPS ANIMATO */
-        .btn-live { padding: 15px; background: #fbbf24; color: #0f172a; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; width: 100%; margin-bottom: 15px; transition: all 0.3s; text-transform: uppercase; }
-        .btn-live.success { background: #22c55e !important; color: white !important; transform: scale(0.98); }
 
         /* NAVBAR ICONE GRANDI */
         .navbar-wrapper { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; z-index: 1000; padding: 0 15px 25px 15px; }
-        .navbar { width: 100%; max-width: 570px; height: 95px; background: #1e293b; display: flex; justify-content: space-around; align-items: center; border: 1px solid #475569; border-radius: 28px; }
-        .nav-item { color: #94a3b8; font-size: 10px; font-weight: 900; text-align: center; flex: 1; cursor: pointer; }
-        .nav-item span { font-size: 32px; display: block; margin-bottom: 5px; }
+        .navbar { width: 100%; max-width: 570px; height: 100px; background: #1e293b; display: flex; justify-content: space-around; align-items: center; border: 1px solid #475569; border-radius: 30px; }
+        .nav-item { color: #94a3b8; font-size: 10px; font-weight: 900; text-align: center; flex: 1; }
+        .nav-item span { font-size: 38px; display: block; margin-bottom: 2px; }
         .nav-item.active { color: #38bdf8; }
     </style>
 </head>
@@ -66,14 +71,14 @@
     <div id="view-live" class="view active">
         <button id="btn-gps" class="btn-live" onclick="goLive()">📡 AGGIORNA GPS E METEO</button>
         
-        <div class="card">
+        <div id="main-card" class="card">
             <div id="sky-box" class="solar-system">
                 <div id="stars-container"></div>
                 <div id="sun-body"></div> 
                 <div class="horizon-mask"></div>
                 <div class="horizon-data">
                     <div class="h-label">ALBA<br><span id="sunrise-txt" style="color:white; font-size:13px">06:00</span></div>
-                    <div class="h-label">TRAMONTO<br><span id="sunset-txt" style="color:white; font-size:13px">20:00</span></div>
+                    <div class="h-label" style="text-align:right">TRAMONTO<br><span id="sunset-txt" style="color:white; font-size:13px">20:00</span></div>
                 </div>
                 <div class="core-display">
                     <span id="display-hour-center" style="font-size:20px; font-weight:900; color:#fbbf24">12:00</span>
@@ -82,7 +87,7 @@
                 </div>
             </div>
 
-            <span id="w_out" class="big-w">0 Wh</span>
+            <span id="w_out" class="big-w" onclick="toggleUnit()">0 W</span>
 
             <div class="manual-controls">
                 <div class="input-group"><label>Ora</label><input type="time" id="input-time" class="manual-input" onchange="manualUpdate()"></div>
@@ -90,26 +95,6 @@
                 <div class="input-group"><label>Latitudine</label><input type="number" id="input-lat" class="manual-input" value="43.71" step="0.01" onchange="manualUpdate()"></div>
                 <div class="input-group"><label>Longitudine</label><input type="number" id="input-lng" class="manual-input" value="10.40" step="0.01" onchange="manualUpdate()"></div>
             </div>
-        </div>
-    </div>
-
-    <div id="view-energy" class="view">
-        <div class="card">
-            <h3 style="text-align:center; color:#38bdf8">REPORT CARICA</h3>
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; text-align:center">
-                <div class="card" style="padding:10px; margin:0">80%<br><b id="charge_80_txt">--</b></div>
-                <div class="card" style="padding:10px; margin:0; border-color:#fbbf24">90%<br><b id="charge_90_txt">--</b></div>
-                <div class="card" style="padding:10px; margin:0">100%<br><b id="charge_100_txt">--</b></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="view-garage" class="view">
-        <div class="card">
-            <label style="font-size:10px; color:#38bdf8; font-weight:900">NOME CAMPER</label>
-            <input type="text" id="camper_name_input" onchange="saveGarage()" class="manual-input" style="margin-bottom:20px">
-            <p>🔋 Batteria: <b id="batt_val">100</b> Ah <button onclick="editBatt()">EDIT</button></p>
-            <p>☀️ Pannelli: <b id="panel_val">100</b> Wp <button onclick="editPanels()">EDIT</button></p>
         </div>
     </div>
 
@@ -123,6 +108,7 @@
 </div>
 
 <script>
+    let isWh = false;
     let weatherFactor = 1.0;
     let battAh = localStorage.getItem('vibe_batt_ah') || 100;
     let panelWp = localStorage.getItem('vibe_panel_wp') || 100;
@@ -134,14 +120,23 @@
         el.classList.add('active');
     }
 
+    function toggleUnit() {
+        isWh = !isWh;
+        const display = document.getElementById('w_out');
+        display.classList.toggle('unit-wh');
+        manualUpdate();
+    }
+
     function createStars() {
         const container = document.getElementById('stars-container');
-        for (let i = 0; i < 40; i++) {
+        container.innerHTML = '';
+        for (let i = 0; i < 50; i++) {
             const star = document.createElement('div');
             star.className = 'star';
             star.style.left = Math.random() * 100 + '%';
             star.style.top = Math.random() * 60 + '%';
             star.style.width = star.style.height = Math.random() * 3 + 'px';
+            star.style.animationDelay = Math.random() * 3 + 's';
             container.appendChild(star);
         }
     }
@@ -159,9 +154,8 @@
                 document.getElementById('r-cloud-percent').innerText = d.current.cloud_cover + "%";
                 weatherFactor = (100 - d.current.cloud_cover) / 100;
                 
-                // Feedback successo
                 btn.classList.add('success');
-                btn.innerText = "✅ SINCRONIZZATO";
+                btn.innerText = "✅ DATI RICEVUTI";
                 manualUpdate();
                 setTimeout(() => { btn.classList.remove('success'); btn.innerText = "📡 AGGIORNA GPS E METEO"; }, 2000);
             });
@@ -174,47 +168,41 @@
         const hDec = hh + (mm/60);
         document.getElementById('display-hour-center').innerText = timeVal;
 
+        const sunriseStr = document.getElementById('sunrise-txt').innerText;
+        const sunsetStr = document.getElementById('sunset-txt').innerText;
+        const sunH = parseInt(sunriseStr.split(':')[0]) + (parseInt(sunriseStr.split(':')[1])/60);
+        const setH = parseInt(sunsetStr.split(':')[0]) + (parseInt(sunsetStr.split(':')[1])/60);
+
         const sky = document.getElementById('sky-box');
         const sun = document.getElementById('sun-body');
         const stars = document.getElementById('stars-container');
+        const card = document.getElementById('main-card');
 
-        if (hDec < 6 || hDec > 20) {
-            sky.classList.add('is-night');
+        if (hDec < sunH || hDec > setH) {
+            sky.classList.add('is-night-sky');
+            card.classList.add('is-night-card');
             stars.style.opacity = "1";
-            sun.style.top = "350px"; 
-            document.getElementById('w_out').innerText = "0 Wh";
-            updateReport(0);
+            sun.style.top = "380px"; 
+            document.getElementById('w_out').innerText = "0 " + (isWh ? "Wh" : "W");
         } else {
-            sky.classList.remove('is-night');
+            sky.classList.remove('is-night-sky');
+            card.classList.remove('is-night-card');
             stars.style.opacity = "0";
-            const progress = (hDec - 6) / 14;
+            const progress = (hDec - sunH) / (setH - sunH);
             const arcHeight = Math.sin(progress * Math.PI);
             sun.style.left = `${progress * 100}%`;
             sun.style.top = `${230 - (arcHeight * 200)}px`;
             
             const power = Math.max(0, arcHeight * panelWp * weatherFactor);
-            document.getElementById('w_out').innerText = Math.round(power) + " Wh";
-            updateReport(power);
+            document.getElementById('w_out').innerText = Math.round(power) + " " + (isWh ? "Wh" : "W");
         }
     }
-
-    function updateReport(p) {
-        const netA = (p / 12.8) - 0.4;
-        document.getElementById('charge_80_txt').innerText = netA > 0 ? ((battAh*0.3)/netA).toFixed(1) + "h" : "∞";
-        document.getElementById('charge_90_txt').innerText = netA > 0 ? ((battAh*0.4)/netA).toFixed(1) + "h" : "∞";
-        document.getElementById('charge_100_txt').innerText = netA > 0 ? ((battAh*0.5)/netA).toFixed(1) + "h" : "∞";
-    }
-
-    function editBatt() { let v = prompt("Capacità Batteria (Ah):", battAh); if(v){ battAh=v; localStorage.setItem('vibe_batt_ah',v); document.getElementById('batt_val').innerText=v; manualUpdate();} }
-    function editPanels() { let v = prompt("Potenza Pannelli (Wp):", panelWp); if(v){ panelWp=v; localStorage.setItem('vibe_panel_wp',v); document.getElementById('panel_val').innerText=v; manualUpdate();} }
-    function saveGarage() { localStorage.setItem('vibe_camper_name', document.getElementById('camper_name_input').value); document.getElementById('camper-name-display').innerText = document.getElementById('camper_name_input').value.toUpperCase(); }
 
     window.onload = () => {
         createStars();
         const now = new Date();
         document.getElementById('input-date').value = now.toISOString().split('T')[0];
         document.getElementById('input-time').value = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
-        document.getElementById('camper_name_input').value = localStorage.getItem('vibe_camper_name') || "VIBE SOLAR";
         document.getElementById('batt_val').innerText = battAh;
         document.getElementById('panel_val').innerText = panelWp;
         manualUpdate();
