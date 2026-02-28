@@ -3,91 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vibe Solar - Precision Mode</title>
+    <title>Vibe Solar - Resa Pannelli</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            margin: 0; background-color: #0f172a; color: white; font-family: sans-serif;
-            display: flex; justify-content: center; min-height: 100vh; padding-bottom: 140px;
-        }
-        
+        body { margin: 0; background-color: #0f172a; color: white; font-family: sans-serif; display: flex; justify-content: center; min-height: 100vh; padding-bottom: 140px; }
         .app-container { width: 100%; max-width: 600px; padding: 15px; }
-        @media (min-width: 768px) { .app-container { max-width: 800px; padding: 30px; } }
-
         .view { display: none; animation: fadeIn 0.3s ease; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; } }
 
         h2 { margin: 10px 0 5px 0; letter-spacing: 4px; color: #38bdf8; text-align: center; font-size: 1.8rem; font-weight: 900; }
-        #camper-name-display { display: block; text-align: center; font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 3px; }
-
         .card { background: #1e293b; border-radius: 28px; padding: 25px; border: 1px solid #334155; margin-bottom: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
         
-        /* SISTEMA SOLARE GIGANTE */
-        .solar-system { 
-            position: relative; height: 280px; width: 100%; margin: 10px 0; 
-            display: flex; justify-content: center; overflow: hidden; border-radius: 0 0 20px 20px;
-        }
-        
-        #sun-body { 
-            position: absolute; width: 155px; height: 155px; 
-            background: radial-gradient(circle, #fbbf24 20%, #f59e0b 60%, #ea580c 100%);
-            border-radius: 50%; z-index: 2; 
-            box-shadow: 0 0 40px #fbbf24, 0 0 80px rgba(251, 191, 36, 0.4);
-            transition: all 1s ease-in-out;
-            transform: translate(-50%, -50%);
-        }
-
-        .horizon-mask { position: absolute; bottom: 0; left: 0; right: 0; height: 80px; background: #1e293b; z-index: 4; border-top: 3px solid #fbbf24; }
-        .horizon-data { position: absolute; bottom: 10px; width: 100%; display: flex; justify-content: space-between; z-index: 6; padding: 0 20px; }
-        .h-label { font-size: 10px; color: #fbbf24; font-weight: 900; }
-        
-        .core-display { 
-            position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%); 
-            background: #0f172a; border: 4px solid #334155; width: 110px; height: 110px; 
-            border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5; 
-        }
+        /* RADAR SOLARE */
+        .solar-system { position: relative; height: 260px; width: 100%; margin: 10px 0; display: flex; justify-content: center; overflow: hidden; border-radius: 0 0 20px 20px; }
+        #sun-body { position: absolute; width: 155px; height: 155px; background: radial-gradient(circle, #fbbf24 20%, #f59e0b 60%, #ea580c 100%); border-radius: 50%; z-index: 2; box-shadow: 0 0 40px #fbbf24; transition: all 0.6s ease-out; transform: translate(-50%, -50%); }
+        .horizon-mask { position: absolute; bottom: 0; left: 0; right: 0; height: 75px; background: #1e293b; z-index: 4; border-top: 3px solid #fbbf24; }
+        .core-display { position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%); background: #0f172a; border: 4px solid #334155; width: 105px; height: 105px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5; }
 
         /* INPUT MANUALI */
-        .manual-controls { background: #0f172a; padding: 15px; border-radius: 20px; margin-top: 15px; border: 1px solid #334155; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .input-group label { display: block; font-size: 10px; color: #38bdf8; font-weight: 900; margin-bottom: 8px; text-transform: uppercase; }
-        .manual-input { background: #1e293b; color: white; border: 1px solid #334155; padding: 12px; border-radius: 12px; width: 100%; font-size: 16px; font-weight: bold; }
-
-        .weather-badges { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .w-badge { background: #0f172a; padding: 10px; border-radius: 15px; border: 1px solid #334155; text-align: center; }
-        .w-label { font-size: 9px; color: #38bdf8; font-weight: 900; display: block; }
+        .manual-controls { background: #0f172a; padding: 15px; border-radius: 20px; margin-top: 15px; border: 1px solid #334155; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .input-group label { display: block; font-size: 9px; color: #38bdf8; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; }
+        .manual-input { background: #1e293b; color: white; border: 1px solid #334155; padding: 10px; border-radius: 10px; font-size: 14px; width: 100%; font-weight: bold; }
         
+        .big-w { font-size: 60px; font-weight: 900; color: #38bdf8; text-align: center; display: block; margin: 10px 0; }
         .btn-live { padding: 15px; background: #fbbf24; color: #0f172a; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; width: 100%; margin-bottom: 15px; }
-        .big-w { font-size: 58px; font-weight: 900; color: #38bdf8; text-align: center; display: block; margin: 15px 0; }
-        
+
         /* NAVBAR */
         .navbar-wrapper { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; z-index: 1000; padding: 0 15px 25px 15px; }
         .navbar { width: 100%; max-width: 570px; height: 85px; background: #1e293b; display: flex; justify-content: space-around; align-items: center; border: 1px solid #475569; border-radius: 24px; }
-        .nav-item { color: #94a3b8; font-size: 11px; font-weight: 900; cursor: pointer; text-align: center; flex: 1; }
+        .nav-item { color: #94a3b8; font-size: 11px; font-weight: 900; text-align: center; flex: 1; cursor: pointer; }
         .nav-item.active { color: #38bdf8; }
-        .nav-item span { font-size: 22px; display: block; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <h2>VIBE SOLAR</h2>
-    <span id="camper-name-display">IL MIO CAMPER</span>
+    <h2 id="camper-name-display">VIBE SOLAR</h2>
 
     <div id="view-live" class="view active">
-        <button id="btn-sync-main" class="btn-live" onclick="goLive()">📡 AGGIORNA DATI REALI (GPS)</button>
+        <button class="btn-live" onclick="goLive()">📡 SINCRONIZZA POSIZIONE (GPS)</button>
         
         <div class="card">
             <div class="solar-system">
                 <div id="sun-body"></div> 
                 <div class="horizon-mask"></div>
-                <div class="horizon-data">
-                    <div class="h-label">ALBA<br><span id="sunrise-txt" style="color:white; font-size:14px">--:--</span></div>
-                    <div class="h-label" style="text-align:right">TRAMONTO<br><span id="sunset-txt" style="color:white; font-size:14px">--:--</span></div>
-                </div>
                 <div class="core-display">
-                    <span id="display-hour-center" style="font-size:22px; font-weight:900; color:#fbbf24">12:00</span>
-                    <span id="r-cloud-percent" style="font-size:14px; font-weight:900; color:#38bdf8">--%</span>
+                    <span id="display-hour-center" style="font-size:20px; font-weight:900; color:#fbbf24">12:00</span>
+                    <span id="r-cloud-percent" style="font-size:14px; color:#38bdf8; font-weight:900">--%</span>
                     <span style="font-size:7px; font-weight:900">NUBI</span>
                 </div>
             </div>
@@ -96,56 +59,42 @@
 
             <div class="manual-controls">
                 <div class="input-group">
-                    <label>Inserisci Ora</label>
-                    <input type="time" id="input-hour" class="manual-input" value="12:00" onchange="manualUpdate()">
+                    <label>Ora</label>
+                    <input type="time" id="input-time" class="manual-input" value="12:00" onchange="manualUpdate()">
                 </div>
                 <div class="input-group">
-                    <label>Mese</label>
-                    <select id="input-month" class="manual-input" onchange="manualUpdate()">
-                        <option value="0">Gennaio</option>
-                        <option value="1">Febbraio</option>
-                        <option value="2">Marzo</option>
-                        <option value="3">Aprile</option>
-                        <option value="4">Maggio</option>
-                        <option value="5" selected>Giugno</option>
-                        <option value="6">Luglio</option>
-                        <option value="7">Agosto</option>
-                        <option value="8">Settembre</option>
-                        <option value="9">Ottobre</option>
-                        <option value="10">Novembre</option>
-                        <option value="11">Dicembre</option>
-                    </select>
+                    <label>Data (GG/MM/AAAA)</label>
+                    <input type="date" id="input-date" class="manual-input" onchange="manualUpdate()">
                 </div>
-            </div>
-
-            <div class="weather-badges">
-                <div class="w-badge"><span class="w-label">VENTO</span><span id="r-wind" class="w-val">--</span></div>
-                <div class="w-badge"><span class="w-label">UMIDITÀ</span><span id="r-hum" class="w-val">--</span></div>
-                <div class="w-badge"><span class="w-label">TEMP.</span><span id="r-temp" class="w-val">--</span></div>
+                <div class="input-group">
+                    <label>Latitudine</label>
+                    <input type="number" id="input-lat" class="manual-input" value="43.7" step="0.01" onchange="manualUpdate()">
+                </div>
+                <div class="input-group">
+                    <label>Longitudine</label>
+                    <input type="number" id="input-lng" class="manual-input" value="10.4" step="0.01" onchange="manualUpdate()">
+                </div>
             </div>
         </div>
     </div>
 
     <div id="view-energy" class="view">
-        <div class="card"><span style="text-align:center; display:block; color:#38bdf8; font-weight:900; margin-bottom:15px">STIMA TEMPI DI CARICA</span>
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px">
-                <div class="w-badge"><span>80%</span><br><b id="charge_80_txt">--</b></div>
-                <div class="w-badge" style="border-color:#fbbf24"><span>90%</span><br><b id="charge_90_txt">--</b></div>
-                <div class="w-badge"><span>100%</span><br><b id="charge_100_txt">--</b></div>
+        <div class="card">
+            <h3 style="text-align:center; color:#38bdf8">REPORT CARICA</h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; text-align:center">
+                <div class="card" style="padding:10px; margin:0">80%<br><b id="charge_80_txt">--</b></div>
+                <div class="card" style="padding:10px; margin:0; border-color:#fbbf24">90%<br><b id="charge_90_txt">--</b></div>
+                <div class="card" style="padding:10px; margin:0">100%<br><b id="charge_100_txt">--</b></div>
             </div>
         </div>
     </div>
 
     <div id="view-garage" class="view">
         <div class="card">
-            <span style="color:#38bdf8; font-weight:900; display:block; margin-bottom:15px">CONFIGURAZIONE</span>
-            <input type="text" id="camper_name_input" onchange="saveGarage()" placeholder="Nome Camper" style="background:#0f172a; color:white; border:1px solid #334155; padding:15px; border-radius:15px; width:100%; margin-bottom:20px">
-            <div style="background:#0f172a; padding:12px; border-radius:12px; border:1px solid #334155; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
-                <span>BATTERIA: <b id="batt_val">100</b> Ah</span><button onclick="editBatt()" style="background:#38bdf8; border:none; border-radius:8px; padding:5px 12px; font-weight:900">EDIT</button>
-            </div>
-            <div style="background:#0f172a; padding:12px; border-radius:12px; border:1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
-                <span>PANNELLI: <b id="panel_val">100</b> Wp</span><button onclick="editPanels()" style="background:#38bdf8; border:none; border-radius:8px; padding:5px 12px; font-weight:900">EDIT</button>
-            </div>
+            <label style="font-size:10px; color:#38bdf8; font-weight:900">NOME CAMPER</label>
+            <input type="text" id="camper_name_input" onchange="saveGarage()" class="manual-input" style="margin-bottom:20px">
+            <p>🔋 Batteria: <b id="batt_val">100</b> Ah <button onclick="editBatt()">EDIT</button></p>
+            <p>☀️ Pannelli: <b id="panel_val">100</b> Wp <button onclick="editPanels()">EDIT</button></p>
         </div>
     </div>
 
@@ -173,55 +122,52 @@
     async function goLive() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(async (p) => {
-                const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.coords.latitude}&longitude=${p.coords.longitude}&current=cloud_cover,temperature_2m,relative_humidity_2m,wind_speed_10m&daily=sunrise,sunset&timezone=auto`);
+                document.getElementById('input-lat').value = p.coords.latitude.toFixed(4);
+                document.getElementById('input-lng').value = p.coords.longitude.toFixed(4);
+                const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.coords.latitude}&longitude=${p.coords.longitude}&current=cloud_cover&timezone=auto`);
                 const d = await r.json();
-                document.getElementById('sunrise-txt').innerText = d.daily.sunrise[0].split('T')[1];
-                document.getElementById('sunset-txt').innerText = d.daily.sunset[0].split('T')[1];
-                document.getElementById('r-temp').innerText = Math.round(d.current.temperature_2m) + "°";
-                document.getElementById('r-hum').innerText = d.current.relative_humidity_2m + "%";
-                document.getElementById('r-wind').innerText = Math.round(d.current.wind_speed_10m) + " km/h";
                 document.getElementById('r-cloud-percent').innerText = d.current.cloud_cover + "%";
                 weatherFactor = (100 - d.current.cloud_cover) / 100;
-                
-                const now = new Date();
-                document.getElementById('input-hour').value = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
-                document.getElementById('input-month').value = now.getMonth();
                 manualUpdate();
             });
         }
     }
 
     function manualUpdate() {
-        const timeVal = document.getElementById('input-hour').value;
-        const [hours, minutes] = timeVal.split(':').map(Number);
-        const hDecimal = hours + (minutes/60);
-        const m = parseInt(document.getElementById('input-month').value);
-        
+        const timeVal = document.getElementById('input-time').value;
+        const [hh, mm] = timeVal.split(':').map(Number);
+        const hDec = hh + (mm/60);
         document.getElementById('display-hour-center').innerText = timeVal;
 
-        const progress = Math.max(0, Math.min(1, (hDecimal - 6) / 14));
-        const seasonalFactor = 0.5 + (Math.sin((m - 2) * Math.PI / 6) * 0.4); 
-        
+        // Resa in base all'ora (arco)
+        const progress = Math.max(0, Math.min(1, (hDec - 6) / 14));
+        const arcHeight = Math.sin(progress * Math.PI);
+
+        // Spostamento Sole
         const sun = document.getElementById('sun-body');
         sun.style.left = `${progress * 100}%`;
-        sun.style.top = `${230 - (Math.sin(progress * Math.PI) * (210 * seasonalFactor))}px`; 
+        sun.style.top = `${230 - (arcHeight * 200)}px`; 
 
-        const power = Math.max(0, Math.sin(progress * Math.PI) * panelWp * seasonalFactor * weatherFactor);
+        // Watt Finali = Pannelli * Altezza Sole * Meteo
+        const power = Math.max(0, arcHeight * panelWp * weatherFactor);
         document.getElementById('w_out').innerText = Math.round(power) + " W";
 
-        const netA = (power / 12.8) - 0.5;
+        // Aggiorna Report
+        const netA = (power / 12.8) - 0.4; // 0.4A consumo camper
         document.getElementById('charge_80_txt').innerText = netA > 0 ? ((battAh*0.3)/netA).toFixed(1) + "h" : "∞";
         document.getElementById('charge_90_txt').innerText = netA > 0 ? ((battAh*0.4)/netA).toFixed(1) + "h" : "∞";
         document.getElementById('charge_100_txt').innerText = netA > 0 ? ((battAh*0.5)/netA).toFixed(1) + "h" : "∞";
     }
 
-    function editBatt() { let v = prompt("Ah Batteria:", battAh); if(v){ battAh=v; localStorage.setItem('vibe_batt_ah',v); document.getElementById('batt_val').innerText=v; manualUpdate();} }
-    function editPanels() { let v = prompt("Watt Pannelli:", panelWp); if(v){ panelWp=v; localStorage.setItem('vibe_panel_wp',v); document.getElementById('panel_val').innerText=v; manualUpdate();} }
+    function editBatt() { let v = prompt("Capacità Batteria (Ah):", battAh); if(v){ battAh=v; localStorage.setItem('vibe_batt_ah',v); document.getElementById('batt_val').innerText=v; manualUpdate();} }
+    function editPanels() { let v = prompt("Potenza Pannelli (Wp):", panelWp); if(v){ panelWp=v; localStorage.setItem('vibe_panel_wp',v); document.getElementById('panel_val').innerText=v; manualUpdate();} }
     function saveGarage() { localStorage.setItem('vibe_camper_name', document.getElementById('camper_name_input').value); document.getElementById('camper-name-display').innerText = document.getElementById('camper_name_input').value.toUpperCase(); }
 
     window.onload = () => {
-        document.getElementById('camper_name_input').value = localStorage.getItem('vibe_camper_name') || "IL MIO CAMPER";
-        document.getElementById('camper-name-display').innerText = (localStorage.getItem('vibe_camper_name') || "IL MIO CAMPER").toUpperCase();
+        const today = new Date();
+        document.getElementById('input-date').value = today.toISOString().split('T')[0];
+        document.getElementById('input-time').value = today.getHours().toString().padStart(2,'0') + ":" + today.getMinutes().toString().padStart(2,'0');
+        document.getElementById('camper_name_input').value = localStorage.getItem('vibe_camper_name') || "VIBE SOLAR";
         document.getElementById('batt_val').innerText = battAh;
         document.getElementById('panel_val').innerText = panelWp;
         manualUpdate();
