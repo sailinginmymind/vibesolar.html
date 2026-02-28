@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vibe Solar - Horizon Edition</title>
+    <title>Vibe Solar - Glow Horizon</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
@@ -22,32 +22,34 @@
         #camper-name-display { display: block; text-align: center; font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 3px; }
 
         .card { background: #1e293b; border-radius: 28px; padding: 25px; border: 1px solid #334155; margin-bottom: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
-        .section-title { font-size: 12px; color: #94a3b8; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 15px; letter-spacing: 1.5px; }
-
-        /* RADAR CON EFFETTO ORIZZONTE */
+        
+        /* RADAR CON SOLE GLOWY */
         .solar-system { 
             position: relative; height: 220px; width: 100%; margin: 20px 0; 
             display: flex; justify-content: center; overflow: visible; 
         }
         
+        /* Arco tagliato (solo sopra l'orizzonte) */
         .sun-arc-path { 
             position: absolute; width: 100%; height: 320px; 
             border: 2px dashed rgba(56, 189, 248, 0.2); 
             border-radius: 50%; top: 30px; pointer-events: none; z-index: 1;
+            clip-path: inset(0 0 52% 0); /* TAGLIA la linea tratteggiata sotto l'orizzonte */
         }
         
         #sun-body { 
-            position: absolute; font-size: 45px; z-index: 2; /* Sotto l'orizzonte */
-            text-shadow: 0 0 15px #fbbf24; transition: all 1.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            position: absolute; font-size: 55px; z-index: 2; 
+            /* Effetto Glow Potenziato */
+            text-shadow: 0 0 20px #fbbf24, 0 0 40px rgba(251, 191, 36, 0.6), 0 0 60px rgba(251, 191, 36, 0.3);
+            transition: all 1.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
             transform: translate(-50%, -50%);
         }
 
-        /* L'ORIZZONTE CHE COPRE IL SOLE */
         .horizon-mask {
             position: absolute; bottom: 0; left: -25px; right: -25px; height: 75px; 
-            background: #1e293b; z-index: 5; /* Stesso colore della card per nascondere il sole */
-            border-top: 2px solid #fbbf24; /* La linea gialla */
-            box-shadow: 0 -10px 20px rgba(0,0,0,0.2);
+            background: #1e293b; z-index: 5; 
+            border-top: 2px solid #fbbf24; 
+            box-shadow: 0 -15px 30px rgba(0,0,0,0.4);
         }
         
         .horizon-data { position: absolute; bottom: 10px; width: 100%; display: flex; justify-content: space-between; z-index: 6; padding: 0 10px; }
@@ -56,7 +58,6 @@
 
         .core-display { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); background: #0f172a; border: 4px solid #334155; width: 110px; height: 110px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
 
-        /* UI ELEMENTS */
         .big-w { font-size: 58px; font-weight: 900; color: #38bdf8; text-align: center; display: block; margin: 15px 0 5px 0; cursor: pointer; }
         #unit-hint { display: block; text-align: center; font-size: 11px; color: #94a3b8; font-weight: bold; margin-bottom: 10px; }
         
@@ -68,7 +69,6 @@
         .btn-live { padding: 20px; background: #fbbf24; color: #0f172a; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; width: 100%; margin-bottom: 20px; text-transform: uppercase; transition: 0.3s; }
         .btn-live.success { background: #22c55e !important; color: white !important; }
 
-        /* NAVBAR */
         .navbar-wrapper { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; z-index: 1000; padding: 0 15px 25px 15px; }
         .navbar-guard { position: absolute; bottom: 0; left: 0; right: 0; height: 110px; background: #0f172a; border-top: 1px solid #1e293b; pointer-events: none; }
         .navbar { width: 100%; max-width: 570px; height: 85px; background: #1e293b; display: flex; justify-content: space-around; align-items: center; border: 1px solid #475569; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); position: relative; pointer-events: auto; }
@@ -76,7 +76,6 @@
         .nav-item span { font-size: 26px; display: block; margin-bottom: 4px; }
         .nav-item.active { color: #38bdf8; }
 
-        /* REPORT ELEMENTS */
         .est-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px; }
         .est-box { background: #0f172a; padding: 15px 5px; border-radius: 15px; border: 1px solid #334155; text-align: center; }
         #chart { display:flex; align-items:flex-end; justify-content:space-between; height:100px; margin-top:20px; border-bottom:1px solid #334155; padding-bottom: 5px; }
@@ -125,10 +124,6 @@
                 <div class="est-box"><span style="font-size:9px; color:#38bdf8">100%</span><span id="charge_100_txt" style="font-size:20px; font-weight:900">--</span></div>
             </div>
             <div id="chart"></div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:20px; text-align:center">
-                <div><span class="w-label">PRODUZIONE</span><span id="daily_wh" style="color:#fbbf24; font-weight:900">0 Wh</span></div>
-                <div><span class="w-label">NETTO GIORNATA</span><span id="daily_net" style="font-weight:900">0 Wh</span></div>
-            </div>
         </div>
     </div>
 
@@ -212,14 +207,13 @@
         
         const sun = document.getElementById('sun-body');
         sun.style.left = `${xPos}%`;
-        sun.style.top = `${150 - yPos}px`; // 150px è il punto dell'orizzonte
+        sun.style.top = `${150 - yPos}px`; 
 
         const alt = Math.max(0, Math.sin(progress * Math.PI));
         currentW = panelWp * alt * weatherFactor;
         totalWhAcc = currentW * (hour - 6 > 0 ? hour - 6 : 0);
         document.getElementById('w_out').innerText = showWh ? Math.round(totalWhAcc) + " Wh" : Math.round(currentW) + " W";
         
-        // Report calc
         const netA = (currentW / 12.8) - 0.5;
         if(netA > 0) {
             document.getElementById('charge_80_txt').innerText = ((battAh*0.3)/netA).toFixed(1) + "h";
