@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vibe Solar - Adaptive Dashboard</title>
+    <title>Vibe Solar - Harmony Dashboard</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
             margin: 0; background-color: #0f172a; color: white; font-family: sans-serif;
-            display: flex; justify-content: center; min-height: 100vh; padding-bottom: 100px;
+            display: flex; justify-content: center; min-height: 100vh; padding-bottom: 120px;
         }
         
         /* Layout Adattivo */
         .app-container { 
             width: 100%; 
-            max-width: 600px; /* Più largo per desktop */
+            max-width: 600px; 
             padding: 15px; 
-            transition: max-width 0.3s ease;
+            position: relative;
         }
         
         @media (min-width: 768px) {
@@ -32,55 +32,84 @@
         h2 { margin: 10px 0 5px 0; letter-spacing: 4px; color: #38bdf8; text-align: center; font-size: 1.8rem; font-weight: 900; }
         #camper-name-display { display: block; text-align: center; font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 3px; }
 
-        .card { background: #1e293b; border-radius: 28px; padding: 25px; border: 1px solid #334155; margin-bottom: 20px; position: relative; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); }
+        .card { background: #1e293b; border-radius: 28px; padding: 25px; border: 1px solid #334155; margin-bottom: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); }
         .section-title { font-size: 12px; color: #94a3b8; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 15px; letter-spacing: 1.5px; }
         
-        /* RADAR - REFINED SPACING */
+        /* DASHBOARD (RADAR) */
         .radar-container { position: relative; width: 100%; max-width: 350px; height: 350px; margin: 25px auto; display: flex; align-items: center; justify-content: center; }
         .sky-orbit { position: absolute; width: 260px; height: 260px; border-radius: 50%; border: 2px solid rgba(56, 189, 248, 0.1); }
         .horizon-line { position: absolute; width: 110%; height: 2px; background: linear-gradient(90deg, transparent, #fbbf24, transparent); top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1; }
+        .horizon-label { position: absolute; font-size: 11px; color: #fbbf24; font-weight: 900; top: -35px; text-transform: uppercase; }
         
-        .horizon-label { position: absolute; font-size: 11px; color: #fbbf24; font-weight: 900; top: -35px; text-transform: uppercase; line-height: 1.3; }
-        
-        .radar-circle { width: 150px; height: 150px; border-radius: 50%; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 5px solid #334155; z-index: 4; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
-        .big-w { font-size: 58px; font-weight: 900; margin: 5px 0; display: block; text-align: center; cursor: pointer; transition: color 0.3s; }
+        .radar-circle { width: 150px; height: 150px; border-radius: 50%; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 5px solid #334155; z-index: 4; }
+        .big-w { font-size: 58px; font-weight: 900; margin: 5px 0; display: block; text-align: center; cursor: pointer; }
         
         .radar-info { position: absolute; color: #94a3b8; font-weight: bold; text-align: center; width: 100px; z-index: 3; }
-        .radar-label { font-size: 11px; color: #38bdf8; display: block; margin-bottom: 3px; letter-spacing: 1px; }
         .radar-val { display: block; color: white; font-size: 24px; font-weight: 900; }
-        
-        /* Posizionamento calibrato */
         .pos-12 { top: -20px; left: 50%; transform: translateX(-50%); } 
         .pos-16 { bottom: -10px; right: -20px; }
         .pos-20 { bottom: -10px; left: -20px; }
 
-        /* REPORT */
-        .est-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 15px; }
-        .est-box { background: #0f172a; padding: 18px 5px; border-radius: 20px; border: 1px solid #334155; text-align: center; }
-        .est-label { font-size: 10px; color: #38bdf8; font-weight: 900; display: block; margin-bottom: 5px; }
-        .est-time { font-size: 22px; color: white; font-weight: 900; display: block; }
+        /* NAVBAR - HARMONIZED */
+        .navbar-wrapper { 
+            position: fixed; 
+            bottom: 20px; 
+            left: 0; 
+            right: 0; 
+            display: flex; 
+            justify-content: center; 
+            z-index: 1000;
+            padding: 0 15px; /* Margine identico a app-container */
+        }
+        .navbar { 
+            width: 100%; 
+            max-width: 570px; /* Allineato alla larghezza interna delle card */
+            height: 90px; 
+            background: #1e293b; 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center; 
+            border: 1px solid #334155; 
+            border-radius: 24px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        @media (min-width: 768px) { .navbar { max-width: 740px; } }
 
-        .balance-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 25px; border-top: 1px solid #334155; padding-top: 20px; }
-        .bal-val { font-size: 18px; font-weight: 900; display: block; margin-top: 5px; }
+        .nav-item { 
+            color: #94a3b8; 
+            font-size: 13px; 
+            font-weight: 900; 
+            cursor: pointer; 
+            text-align: center; 
+            flex: 1; 
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .nav-item span { font-size: 28px; } /* Icone più grandi */
+        .nav-item.active { color: #38bdf8; transform: translateY(-5px); }
+        .nav-item.active span { filter: drop-shadow(0 0 8px #38bdf8); }
 
-        /* CHART INTERATTIVO */
-        #chart { display:flex; align-items:flex-end; justify-content:space-between; height:120px; margin-top:25px; border-bottom:1px solid #334155; padding-bottom: 8px; }
-        .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; position: relative; cursor: pointer; }
-        .bar { width: 65%; background: #38bdf8; border-radius: 4px 4px 0 0; transition: height 0.5s ease; }
-        .bar-val-pop { position: absolute; top: -30px; font-size: 11px; color: #fbbf24; font-weight: 900; opacity: 0; background: #1e293b; padding: 4px 8px; border-radius: 6px; border: 1px solid #334155; pointer-events: none; white-space: nowrap; z-index: 10; }
-        .bar-container:active .bar { background: #fbbf24; }
-        .bar-container:active .bar-val-pop { opacity: 1; }
-
-        /* UI ELEMENTS */
-        .btn-live { padding: 20px; background: #fbbf24; color: #0f172a; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; width: 100%; margin-bottom: 20px; text-transform: uppercase; font-size: 14px; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3); }
-        .btn-live.success { background: #22c55e; color: white; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3); }
+        /* ALTRO */
+        .btn-live { padding: 20px; background: #fbbf24; color: #0f172a; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; width: 100%; margin-bottom: 20px; text-transform: uppercase; font-size: 15px; }
+        .btn-live.success { background: #22c55e; color: white; }
         .btn-calc { background: #38bdf8; color: #0f172a; border: none; border-radius: 12px; min-width: 50px; cursor: pointer; font-weight: 900; font-size: 18px; }
         input { border-radius: 14px; border: 1px solid #334155; background: #0f172a; color: white; padding: 14px; width: 100%; outline: none; font-size: 15px; }
 
-        /* NAVBAR */
-        .navbar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px; height: 85px; background: #1e293b; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #334155; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-        .nav-item { color: #94a3b8; font-size: 12px; font-weight: 900; cursor: pointer; text-align: center; flex: 1; transition: color 0.2s; }
-        .nav-item.active { color: #38bdf8; }
+        /* REPORT STYLING */
+        .est-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .est-box { background: #0f172a; padding: 18px 5px; border-radius: 20px; border: 1px solid #334155; text-align: center; }
+        .est-time { font-size: 22px; color: white; font-weight: 900; display: block; }
+        .balance-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 25px; border-top: 1px solid #334155; padding-top: 20px; }
+        
+        /* CHART */
+        #chart { display:flex; align-items:flex-end; justify-content:space-between; height:110px; margin-top:20px; border-bottom:1px solid #334155; padding-bottom: 8px; }
+        .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; position: relative; cursor: pointer; }
+        .bar { width: 65%; background: #38bdf8; border-radius: 4px 4px 0 0; }
+        .bar-val-pop { position: absolute; top: -30px; font-size: 11px; color: #fbbf24; font-weight: 900; opacity: 0; background: #1e293b; padding: 4px 8px; border-radius: 6px; border: 1px solid #334155; pointer-events: none; z-index: 10; }
+        .bar-container:active .bar-val-pop { opacity: 1; }
     </style>
 </head>
 <body>
@@ -93,9 +122,9 @@
         <button id="btn-sync-main" class="btn-live" onclick="goLive()">📡 AGGIORNA LIVE (GPS)</button>
         <div class="card">
             <div class="radar-container">
-                <div class="radar-info pos-12"><span class="radar-label">VENTO</span><span class="radar-val" id="r-wind">--</span></div>
-                <div class="radar-info pos-16"><span class="radar-label">UMIDITÀ</span><span class="radar-val" id="r-hum">--</span></div>
-                <div class="radar-info pos-20"><span class="radar-label">TEMP.</span><span class="radar-val" id="r-temp">--</span></div>
+                <div class="radar-info pos-12"><span class="radar-label" style="font-size:11px; color:#38bdf8">VENTO</span><span class="radar-val" id="r-wind">--</span></div>
+                <div class="radar-info pos-16"><span class="radar-label" style="font-size:11px; color:#38bdf8">UMIDITÀ</span><span class="radar-val" id="r-hum">--</span></div>
+                <div class="radar-info pos-20"><span class="radar-label" style="font-size:11px; color:#38bdf8">TEMP.</span><span class="radar-val" id="r-temp">--</span></div>
                 
                 <div class="sky-orbit"><div id="celestial-body" style="position: absolute; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; top: 50%; left: 50%; margin-top: -25px; margin-left: -25px; z-index: 10; font-size: 42px; transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);">☀️</div></div>
                 
@@ -107,71 +136,70 @@
                 <div class="radar-circle">
                     <span id="r-icon-center" style="font-size:48px">☀️</span>
                     <span id="r-cloud-percent" style="font-size: 20px; color: white; font-weight: 900;">--%</span>
-                    <span class="radar-label" style="font-size: 9px;">COPERTURA</span>
+                    <span style="font-size: 9px; color: #38bdf8; font-weight: bold; text-transform: uppercase;">Nubi</span>
                 </div>
             </div>
             <span id="w_out" class="big-w" onclick="toggleRadarUnit()" style="color: #38bdf8;">0 W</span>
-            <span id="unit-hint" style="display:block; text-align:center; font-size:11px; color:#94a3b8; font-weight:bold; letter-spacing: 1px;">Tocca per W/Wh</span>
+            <span id="unit-hint" style="display:block; text-align:center; font-size:11px; color:#94a3b8; font-weight:bold;">Tocca per W/Wh</span>
         </div>
         <div class="card">
             <span class="section-title">Controlli Manuali</span>
             <div style="display:flex; gap:10px; margin-bottom:10px;"><input type="date" id="d_val"><input type="time" id="t_val"></div>
-            <div style="display:flex; gap:10px;"><input type="number" id="la_val" step="0.001" placeholder="Latitudine"><input type="number" id="lo_val" step="0.001" placeholder="Longitudine"><button class="btn-calc" onclick="syncSpecificDate()">🔍</button></div>
+            <div style="display:flex; gap:10px;"><input type="number" id="la_val" step="0.001" placeholder="Lat"><input type="number" id="lo_val" step="0.001" placeholder="Lon"><button class="btn-calc" onclick="syncSpecificDate()">🔍</button></div>
         </div>
     </div>
 
     <div id="view-energy" class="view">
         <div class="card">
-            <span class="section-title" style="text-align:center; display:block">Tempi stimati di ricarica</span>
+            <span class="section-title" style="text-align:center; display:block">Mancanti alla carica al...</span>
             <div class="est-grid">
-                <div class="est-box"><span class="est-label">AL 80%</span><span class="est-time" id="charge_80_txt">--</span></div>
-                <div class="est-box" style="border-color:#fbbf24; transform: scale(1.05);"><span class="est-label" style="color:#fbbf24">AL 90%</span><span class="est-time" id="charge_90_txt">--</span></div>
-                <div class="est-box"><span class="est-label">AL 100%</span><span class="est-time" id="charge_100_txt">--</span></div>
+                <div class="est-box"><span style="font-size:10px; color:#38bdf8; font-weight:900">80%</span><span class="est-time" id="charge_80_txt">--</span></div>
+                <div class="est-box" style="border-color:#fbbf24;"><span style="font-size:10px; color:#fbbf24; font-weight:900">90%</span><span class="est-time" id="charge_90_txt">--</span></div>
+                <div class="est-box"><span style="font-size:10px; color:#38bdf8; font-weight:900">100%</span><span class="est-time" id="charge_100_txt">--</span></div>
             </div>
-            <p id="charge_status_txt" style="font-size:12px; color:#38bdf8; text-align:center; margin-top:20px; font-weight:bold; border: 1px dashed #334155; padding: 10px; border-radius: 12px;">Calcolo energia in corso...</p>
-            
+            <p id="charge_status_txt" style="font-size:12px; color:#38bdf8; text-align:center; margin-top:20px; font-weight:bold; border: 1px dashed #334155; padding: 10px; border-radius: 12px;">Calcolo energia...</p>
             <div class="balance-grid">
-                <div class="bal-item"><span class="radar-label">PRODUZIONE</span><span class="bal-val" id="daily_wh" style="color:#fbbf24">0 Wh</span></div>
-                <div class="bal-item"><span class="radar-label">CONSUMO</span><span class="bal-val" id="daily_cons" style="color:#ef4444">0 Wh</span></div>
-                <div class="bal-item"><span class="radar-label">NETTO</span><span class="bal-val" id="daily_net" style="color:white">0 Wh</span></div>
+                <div style="text-align:center"><span style="font-size:10px; color:#38bdf8; font-weight:900">PRODUZIONE</span><span class="bal-val" id="daily_wh" style="color:#fbbf24; font-size:18px">0 Wh</span></div>
+                <div style="text-align:center"><span style="font-size:10px; color:#38bdf8; font-weight:900">CONSUMO</span><span class="bal-val" id="daily_cons" style="color:#ef4444; font-size:18px">0 Wh</span></div>
+                <div style="text-align:center"><span style="font-size:10px; color:#38bdf8; font-weight:900">NETTO</span><span class="bal-val" id="daily_net" style="color:white; font-size:18px">0 Wh</span></div>
             </div>
         </div>
-
         <div class="card">
             <div style="background: #0f172a; border-radius:15px; padding:15px; border:1px solid #334155; display:flex; align-items:center; gap:20px; margin-bottom:15px;">
-                <span class="section-title" style="margin:0; flex:1">TILT PANNELLI: <b id="tilt_txt" style="color:#38bdf8">0°</b></span>
+                <span class="section-title" style="margin:0; flex:1">TILT: <b id="tilt_txt" style="color:#38bdf8">0°</b></span>
                 <input type="range" id="tilt_range" min="0" max="90" value="0" oninput="update()" style="flex:2; margin:0">
             </div>
             <div id="chart"></div>
-            <p style="text-align:center; font-size:10px; color:#94a3b8; margin-top:12px;">Tocca le barre per il dettaglio Watt/Ora</p>
         </div>
     </div>
 
     <div id="view-garage" class="view">
         <div class="card">
-            <span class="section-title">Impostazioni Veicolo</span>
+            <span class="section-title">Veicolo</span>
             <input type="text" id="camper_name_input" placeholder="Nome Camper" onchange="saveGarage()" style="margin-bottom: 20px;">
             <div style="display:grid; gap:15px;">
                 <div style="background:#0f172a; padding:15px; border-radius:16px; border:1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
-                    <div><span class="section-title" style="margin:0">Capacità Batteria</span><br><b id="batt_cap_display" style="color:#fbbf24; font-size:20px;">100</b> <small>Ah</small></div>
-                    <button class="btn-calc" style="font-size:12px; padding:8px 15px;" onclick="changeBattery()">EDIT</button>
+                    <div><span class="section-title" style="margin:0">Batteria</span><br><b id="batt_cap_display" style="color:#fbbf24; font-size:20px;">100</b> <small>Ah</small></div>
+                    <button class="btn-calc" onclick="changeBattery()">EDIT</button>
                 </div>
                 <div style="background:#0f172a; padding:15px; border-radius:16px; border:1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
-                    <div><span class="section-title" style="margin:0">Potenza Pannelli</span><br><b id="panel_wp_display" style="color:#fbbf24; font-size:20px;">100</b> <small>Wp</small></div>
-                    <button class="btn-calc" style="font-size:12px; padding:8px 15px;" onclick="changePanels()">EDIT</button>
+                    <div><span class="section-title" style="margin:0">Pannelli</span><br><b id="panel_wp_display" style="color:#fbbf24; font-size:20px;">100</b> <small>Wp</small></div>
+                    <button class="btn-calc" onclick="changePanels()">EDIT</button>
                 </div>
                 <div style="background:#0f172a; padding:15px; border-radius:16px; border:1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
-                    <div><span class="section-title" style="margin:0">Consumo Utenze</span><br><b id="base_load_display" style="color:#fbbf24; font-size:20px;">0.5</b> <small>A</small></div>
-                    <button class="btn-calc" style="font-size:12px; padding:8px 15px;" onclick="changeLoad()">EDIT</button>
+                    <div><span class="section-title" style="margin:0">Consumo Fisso</span><br><b id="base_load_display" style="color:#fbbf24; font-size:20px;">0.5</b> <small>A</small></div>
+                    <button class="btn-calc" onclick="changeLoad()">EDIT</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="navbar">
-        <div class="nav-item active" onclick="switchView('live', this)"><span>🛰️</span><br>RADAR</div>
-        <div class="nav-item" onclick="switchView('energy', this)"><span>📊</span><br>REPORT</div>
-        <div class="nav-item" onclick="switchView('garage', this)"><span>🚐</span><br>GARAGE</div>
+    <div class="navbar-wrapper">
+        <div class="navbar">
+            <div class="nav-item active" onclick="switchView('live', this)"><span>🛰️</span>DASHBOARD</div>
+            <div class="nav-item" onclick="switchView('energy', this)"><span>📊</span>REPORT</div>
+            <div class="nav-item" onclick="switchView('garage', this)"><span>🚐</span>GARAGE</div>
+        </div>
     </div>
 </div>
 
@@ -188,17 +216,17 @@
     }
 
     function changeBattery() {
-        let v = prompt("Capacità Batteria (Ah):", batteryAh);
+        let v = prompt("Ah Batteria:", batteryAh);
         if(v) { batteryAh = v; localStorage.setItem('vibe_batt_ah', v); update(); }
     }
 
     function changePanels() {
-        let v = prompt("Watt di Picco Pannelli (Wp):", panelWp);
+        let v = prompt("Watt Pannelli:", panelWp);
         if(v) { panelWp = v; localStorage.setItem('vibe_panel_wp', v); update(); }
     }
 
     function changeLoad() {
-        let v = prompt("Consumo costante (Ampere):", baseLoadA);
+        let v = prompt("Consumo (A):", baseLoadA);
         if(v) { baseLoadA = v; localStorage.setItem('vibe_base_load', v); update(); }
     }
 
@@ -219,13 +247,9 @@
                 document.getElementById('la_val').value = p.coords.latitude.toFixed(3);
                 document.getElementById('lo_val').value = p.coords.longitude.toFixed(3);
                 await fetchFullData(p.coords.latitude, p.coords.longitude, document.getElementById('d_val').value, true);
-                
                 btn.classList.add('success');
-                btn.innerText = "✅ DATI AGGIORNATI";
-                setTimeout(() => {
-                    btn.classList.remove('success');
-                    btn.innerText = "📡 AGGIORNA LIVE (GPS)";
-                }, 2000);
+                btn.innerText = "✅ SINCRONIZZATO";
+                setTimeout(() => { btn.classList.remove('success'); btn.innerText = "📡 AGGIORNA LIVE (GPS)"; }, 2000);
             });
         }
     }
@@ -273,7 +297,7 @@
             let w = (alt > 0) ? panelWp * Math.max(0, Math.cos((Math.PI/2) - alt - (tilt * Math.PI/180))) * weatherFactor : 0;
             totalDailyWh += w;
             if (i <= now.getHours()) cumulativeWh += w;
-            chart.innerHTML += `<div class="bar-container"><span class="bar-val-pop">${Math.round(w)}W</span><div class="bar" style="height:${(w/panelWp)*100}px"></div><small style="font-size:7px; margin-top:5px; color:#94a3b8">${i}</small></div>`;
+            chart.innerHTML += `<div class="bar-container"><span class="bar-val-pop">${Math.round(w)}W</span><div class="bar" style="height:${(w/panelWp)*100}px"></div><small style="font-size:8px; margin-top:5px; color:#94a3b8">${i}</small></div>`;
         }
 
         const currentAlt = getSunAlt(now, lat, lon);
@@ -288,12 +312,12 @@
             document.getElementById('charge_100_txt').innerText = ((batteryAh*0.5)/netAmps).toFixed(1) + "h";
             document.getElementById('charge_90_txt').innerText = ((batteryAh*0.4)/netAmps).toFixed(1) + "h";
             document.getElementById('charge_80_txt').innerText = ((batteryAh*0.3)/netAmps).toFixed(1) + "h";
-            document.getElementById('charge_status_txt').innerText = `ENERGIA NETTA IN INGRESSO: +${netAmps.toFixed(1)}A`;
+            document.getElementById('charge_status_txt').innerText = `RESA NETTA: +${netAmps.toFixed(1)}A`;
         } else {
             document.getElementById('charge_100_txt').innerText = "---";
             document.getElementById('charge_90_txt').innerText = "---";
             document.getElementById('charge_80_txt').innerText = "---";
-            document.getElementById('charge_status_txt').innerText = "⚠️ IL CONSUMO SUPERA LA PRODUZIONE";
+            document.getElementById('charge_status_txt').innerText = "DISPERSIONE ENERGETICA";
         }
 
         const dailyCons = baseLoadA * 12.8 * 24; 
