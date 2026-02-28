@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vibe Solar - Interactive Report</title>
+    <title>Vibe Solar - Mobile Interactive</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
@@ -52,11 +52,15 @@
         .batt-edit { background: none; border: 1px solid #38bdf8; color: #38bdf8; border-radius: 6px; padding: 3px 10px; font-size: 10px; cursor: pointer; }
         .charge-time { font-size: 24px; color: #38bdf8; font-weight: 900; display: block; }
 
-        /* GRAPH INTERACTION */
+        /* GRAPH INTERACTION FIXED FOR MOBILE */
         .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; position: relative; cursor: pointer; }
-        .bar { width: 75%; background: #38bdf8; border-radius: 2px; transition: background 0.2s; position: relative; }
-        .bar:hover, .bar:active { background: #fbbf24; }
-        .bar-value { position: absolute; top: -18px; font-size: 9px; color: #fbbf24; font-weight: 900; opacity: 0; transition: opacity 0.2s; white-space: nowrap; }
+        .bar { width: 75%; background: #38bdf8; border-radius: 2px; transition: background 0.2s, transform 0.1s; position: relative; }
+        
+        /* Valore che appare */
+        .bar-value { position: absolute; top: -18px; font-size: 9px; color: #fbbf24; font-weight: 900; opacity: 0; transition: opacity 0.2s; white-space: nowrap; pointer-events: none; }
+        
+        /* Stato attivo (PC e Mobile) */
+        .bar-container:hover .bar, .bar-container:active .bar { background: #fbbf24; transform: scaleX(1.1); }
         .bar-container:hover .bar-value, .bar-container:active .bar-value { opacity: 1; }
 
         /* INPUTS */
@@ -78,7 +82,6 @@
 
     <div id="view-live" class="view active">
         <button id="main-sync" class="btn-live" onclick="goLive()">📡 MODALITÀ LIVE (ORA/GPS)</button>
-
         <div class="card">
             <div class="radar-container">
                 <div class="radar-info pos-12"><span class="radar-label">VENTO</span><span class="radar-val" id="r-wind">--</span></div>
@@ -98,7 +101,6 @@
                 <div><small class="section-title">Tramonto</small><b id="sunset-txt" style="font-size:18px; color:#fbbf24">--:--</b></div>
             </div>
         </div>
-
         <div class="card">
             <span class="section-title">Simulatore Temporale</span>
             <div class="input-row"><input type="date" id="d_val"><button class="btn-calc" onclick="syncSpecificDate()">🔍</button><input type="time" id="t_val"></div>
@@ -227,9 +229,9 @@
                 wh = pWatt * Math.max(0, Math.cos((Math.PI/2) - alt - (tilt * Math.PI/180))) * weatherFactor;
                 totalWh += wh;
             }
-            // Creazione barra interattiva
+            // Aggiunto "ontouchstart" per mobile
             chart.innerHTML += `
-                <div class="bar-container">
+                <div class="bar-container" ontouchstart="">
                     <span class="bar-value">${Math.round(wh)}W</span>
                     <div class="bar" style="height:${(wh/(pWatt||1))*100}%"></div>
                     <span style="font-size:8px; color:#94a3b8; margin-top:4px">${i}</span>
