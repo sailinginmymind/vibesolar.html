@@ -23,40 +23,46 @@
 
         .card { background: #1e293b; border-radius: 28px; padding: 25px; border: 1px solid #334155; margin-bottom: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
         
-        /* RADAR CON SOLE GLOWY */
+        /* RADAR CON SOLE GIGANTE */
         .solar-system { 
-            position: relative; height: 220px; width: 100%; margin: 20px 0; 
+            position: relative; height: 300px; /* Aumentato per ospitare il sole grande */
+            width: 100%; margin: 20px 0; 
             display: flex; justify-content: center; overflow: visible; 
         }
         
-        /* Arco tagliato (solo sopra l'orizzonte) */
         .sun-arc-path { 
-            position: absolute; width: 100%; height: 320px; 
+            position: absolute; width: 100%; height: 400px; 
             border: 2px dashed rgba(56, 189, 248, 0.2); 
-            border-radius: 50%; top: 30px; pointer-events: none; z-index: 1;
-            clip-path: inset(0 0 52% 0); /* TAGLIA la linea tratteggiata sotto l'orizzonte */
+            border-radius: 50%; top: 50px; pointer-events: none; z-index: 1;
+            clip-path: inset(0 0 55% 0); 
         }
         
+        /* IL NUOVO SOLE GIGANTE */
         #sun-body { 
-            position: absolute; font-size: 55px; z-index: 2; 
-            /* Effetto Glow Potenziato */
-            text-shadow: 0 0 20px #fbbf24, 0 0 40px rgba(251, 191, 36, 0.6), 0 0 60px rgba(251, 191, 36, 0.3);
+            position: absolute; 
+            width: 150px; /* Dimensione aumentata (bilanciata per mobile/desktop) */
+            height: 150px; 
+            background: radial-gradient(circle, #fbbf24 20%, #f59e0b 60%, #ea580c 100%);
+            border-radius: 50%;
+            z-index: 2; 
+            /* Glow massiccio */
+            box-shadow: 0 0 40px #fbbf24, 0 0 80px rgba(251, 191, 36, 0.4);
             transition: all 1.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
             transform: translate(-50%, -50%);
         }
 
         .horizon-mask {
-            position: absolute; bottom: 0; left: -25px; right: -25px; height: 75px; 
+            position: absolute; bottom: 0; left: -25px; right: -25px; height: 85px; 
             background: #1e293b; z-index: 5; 
-            border-top: 2px solid #fbbf24; 
-            box-shadow: 0 -15px 30px rgba(0,0,0,0.4);
+            border-top: 3px solid #fbbf24; 
+            box-shadow: 0 -15px 30px rgba(0,0,0,0.5);
         }
         
-        .horizon-data { position: absolute; bottom: 10px; width: 100%; display: flex; justify-content: space-between; z-index: 6; padding: 0 10px; }
+        .horizon-data { position: absolute; bottom: 10px; width: 100%; display: flex; justify-content: space-between; z-index: 6; padding: 0 15px; }
         .h-label { font-size: 10px; color: #fbbf24; font-weight: 900; }
         .h-time { color: white; font-size: 16px; display: block; margin-top: 2px; }
 
-        .core-display { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); background: #0f172a; border: 4px solid #334155; width: 110px; height: 110px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
+        .core-display { position: absolute; bottom: 45px; left: 50%; transform: translateX(-50%); background: #0f172a; border: 4px solid #334155; width: 110px; height: 110px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
 
         .big-w { font-size: 58px; font-weight: 900; color: #38bdf8; text-align: center; display: block; margin: 15px 0 5px 0; cursor: pointer; }
         #unit-hint { display: block; text-align: center; font-size: 11px; color: #94a3b8; font-weight: bold; margin-bottom: 10px; }
@@ -93,7 +99,7 @@
         <div class="card">
             <div class="solar-system" id="solar-system">
                 <div class="sun-arc-path"></div>
-                <div id="sun-body">☀️</div>
+                <div id="sun-body"></div> 
                 <div class="horizon-mask"></div>
                 <div class="horizon-data">
                     <div class="h-label">ALBA<br><span class="h-time" id="sunrise-txt">06:00</span></div>
@@ -202,12 +208,13 @@
         const hour = now.getHours() + now.getMinutes()/60;
         const progress = Math.max(0, Math.min(1, (hour - 6) / 12));
         
+        // Calcolo arco per il sole gigante
         const xPos = progress * 100;
-        const yPos = Math.sin(progress * Math.PI) * 160; 
+        const yPos = Math.sin(progress * Math.PI) * 200; // Aumentato il raggio del movimento
         
         const sun = document.getElementById('sun-body');
         sun.style.left = `${xPos}%`;
-        sun.style.top = `${150 - yPos}px`; 
+        sun.style.top = `${220 - yPos}px`; // Offset regolato per la dimensione 150px
 
         const alt = Math.max(0, Math.sin(progress * Math.PI));
         currentW = panelWp * alt * weatherFactor;
