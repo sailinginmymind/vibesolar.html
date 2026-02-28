@@ -8,21 +8,18 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
             margin: 0; background-color: #0f172a; color: white; font-family: sans-serif;
-            display: flex; justify-content: center; min-height: 100vh; padding-bottom: 120px;
+            display: flex; justify-content: center; min-height: 100vh; padding-bottom: 140px; /* Spazio per la nav */
         }
         
-        /* Layout Adattivo */
         .app-container { 
             width: 100%; 
             max-width: 600px; 
             padding: 15px; 
-            position: relative;
         }
         
         @media (min-width: 768px) {
             .app-container { max-width: 800px; padding: 30px; }
-            .radar-container { transform: scale(1.1); margin: 40px auto !important; }
-            .big-w { font-size: 70px !important; }
+            .radar-container { transform: scale(1.1); margin: 50px auto !important; }
         }
 
         .view { display: none; animation: fadeIn 0.3s ease; }
@@ -35,80 +32,78 @@
         .card { background: #1e293b; border-radius: 28px; padding: 25px; border: 1px solid #334155; margin-bottom: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); }
         .section-title { font-size: 12px; color: #94a3b8; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 15px; letter-spacing: 1.5px; }
         
-        /* DASHBOARD (RADAR) */
-        .radar-container { position: relative; width: 100%; max-width: 350px; height: 350px; margin: 25px auto; display: flex; align-items: center; justify-content: center; }
-        .sky-orbit { position: absolute; width: 260px; height: 260px; border-radius: 50%; border: 2px solid rgba(56, 189, 248, 0.1); }
-        .horizon-line { position: absolute; width: 110%; height: 2px; background: linear-gradient(90deg, transparent, #fbbf24, transparent); top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1; }
-        .horizon-label { position: absolute; font-size: 11px; color: #fbbf24; font-weight: 900; top: -35px; text-transform: uppercase; }
+        /* DASHBOARD - FIX SOVRAPPOSIZIONE */
+        .radar-container { position: relative; width: 100%; max-width: 360px; height: 320px; margin: 30px auto; display: flex; align-items: center; justify-content: center; overflow: visible; }
+        .sky-orbit { position: absolute; width: 280px; height: 280px; border-radius: 50%; border: 2px solid rgba(56, 189, 248, 0.05); pointer-events: none; }
         
-        .radar-circle { width: 150px; height: 150px; border-radius: 50%; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 5px solid #334155; z-index: 4; }
-        .big-w { font-size: 58px; font-weight: 900; margin: 5px 0; display: block; text-align: center; cursor: pointer; }
+        .horizon-line { position: absolute; width: 115%; height: 2px; background: linear-gradient(90deg, transparent, #fbbf24, transparent); top: 52%; left: 50%; transform: translate(-50%, -50%); z-index: 5; }
         
-        .radar-info { position: absolute; color: #94a3b8; font-weight: bold; text-align: center; width: 100px; z-index: 3; }
-        .radar-val { display: block; color: white; font-size: 24px; font-weight: 900; }
-        .pos-12 { top: -20px; left: 50%; transform: translateX(-50%); } 
-        .pos-16 { bottom: -10px; right: -20px; }
-        .pos-20 { bottom: -10px; left: -20px; }
+        /* Spostati leggermente più in alto per non toccare il sole al tramonto */
+        .horizon-label { position: absolute; font-size: 11px; color: #fbbf24; font-weight: 900; top: -45px; text-transform: uppercase; z-index: 6; pointer-events: none; }
+        
+        .radar-circle { width: 150px; height: 150px; border-radius: 50%; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 5px solid #334155; z-index: 10; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        
+        /* Il sole ora ruota su un'orbita che non tocca le scritte */
+        #celestial-body { 
+            position: absolute; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; 
+            top: 50%; left: 50%; margin-top: -25px; margin-left: -25px; z-index: 2; font-size: 42px; 
+            transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .big-w { font-size: 58px; font-weight: 900; margin: 5px 0; display: block; text-align: center; cursor: pointer; position: relative; z-index: 11; }
+        
+        .radar-info { position: absolute; color: #94a3b8; font-weight: bold; text-align: center; width: 100px; z-index: 11; }
+        .pos-12 { top: -25px; left: 50%; transform: translateX(-50%); } 
+        .pos-16 { bottom: -15px; right: -25px; }
+        .pos-20 { bottom: -15px; left: -25px; }
 
-        /* NAVBAR - HARMONIZED */
+        /* NAVBAR CON GRADIENTE E SFOCATURA */
         .navbar-wrapper { 
             position: fixed; 
-            bottom: 20px; 
+            bottom: 0; 
             left: 0; 
             right: 0; 
             display: flex; 
             justify-content: center; 
             z-index: 1000;
-            padding: 0 15px; /* Margine identico a app-container */
+            padding: 20px 15px 30px 15px;
+            /* L'effetto magico: gradiente che copre lo scorrimento */
+            background: linear-gradient(to top, #0f172a 70%, transparent 100%);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
         .navbar { 
             width: 100%; 
-            max-width: 570px; /* Allineato alla larghezza interna delle card */
+            max-width: 570px; 
             height: 90px; 
             background: #1e293b; 
             display: flex; 
             justify-content: space-around; 
             align-items: center; 
-            border: 1px solid #334155; 
+            border: 1px solid #475569; 
             border-radius: 24px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
         }
         @media (min-width: 768px) { .navbar { max-width: 740px; } }
 
         .nav-item { 
-            color: #94a3b8; 
-            font-size: 13px; 
-            font-weight: 900; 
-            cursor: pointer; 
-            text-align: center; 
-            flex: 1; 
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
+            color: #94a3b8; font-size: 13px; font-weight: 900; cursor: pointer; text-align: center; flex: 1; 
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
         }
-        .nav-item span { font-size: 28px; } /* Icone più grandi */
+        .nav-item span { font-size: 30px; }
         .nav-item.active { color: #38bdf8; transform: translateY(-5px); }
-        .nav-item.active span { filter: drop-shadow(0 0 8px #38bdf8); }
 
-        /* ALTRO */
+        /* UI ELEMENTS */
         .btn-live { padding: 20px; background: #fbbf24; color: #0f172a; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; width: 100%; margin-bottom: 20px; text-transform: uppercase; font-size: 15px; }
         .btn-live.success { background: #22c55e; color: white; }
         .btn-calc { background: #38bdf8; color: #0f172a; border: none; border-radius: 12px; min-width: 50px; cursor: pointer; font-weight: 900; font-size: 18px; }
         input { border-radius: 14px; border: 1px solid #334155; background: #0f172a; color: white; padding: 14px; width: 100%; outline: none; font-size: 15px; }
 
-        /* REPORT STYLING */
-        .est-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 15px; }
-        .est-box { background: #0f172a; padding: 18px 5px; border-radius: 20px; border: 1px solid #334155; text-align: center; }
-        .est-time { font-size: 22px; color: white; font-weight: 900; display: block; }
-        .balance-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 25px; border-top: 1px solid #334155; padding-top: 20px; }
-        
         /* CHART */
         #chart { display:flex; align-items:flex-end; justify-content:space-between; height:110px; margin-top:20px; border-bottom:1px solid #334155; padding-bottom: 8px; }
         .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; position: relative; cursor: pointer; }
         .bar { width: 65%; background: #38bdf8; border-radius: 4px 4px 0 0; }
-        .bar-val-pop { position: absolute; top: -30px; font-size: 11px; color: #fbbf24; font-weight: 900; opacity: 0; background: #1e293b; padding: 4px 8px; border-radius: 6px; border: 1px solid #334155; pointer-events: none; z-index: 10; }
+        .bar-val-pop { position: absolute; top: -30px; font-size: 11px; color: #fbbf24; font-weight: 900; opacity: 0; background: #1e293b; padding: 4px 8px; border-radius: 6px; border: 1px solid #334155; pointer-events: none; z-index: 100; }
         .bar-container:active .bar-val-pop { opacity: 1; }
     </style>
 </head>
@@ -122,15 +117,15 @@
         <button id="btn-sync-main" class="btn-live" onclick="goLive()">📡 AGGIORNA LIVE (GPS)</button>
         <div class="card">
             <div class="radar-container">
-                <div class="radar-info pos-12"><span class="radar-label" style="font-size:11px; color:#38bdf8">VENTO</span><span class="radar-val" id="r-wind">--</span></div>
-                <div class="radar-info pos-16"><span class="radar-label" style="font-size:11px; color:#38bdf8">UMIDITÀ</span><span class="radar-val" id="r-hum">--</span></div>
-                <div class="radar-info pos-20"><span class="radar-label" style="font-size:11px; color:#38bdf8">TEMP.</span><span class="radar-val" id="r-temp">--</span></div>
+                <div class="radar-info pos-12"><span style="font-size:11px; color:#38bdf8; font-weight:bold; letter-spacing:1px">VENTO</span><span class="radar-val" id="r-wind">--</span></div>
+                <div class="radar-info pos-16"><span style="font-size:11px; color:#38bdf8; font-weight:bold; letter-spacing:1px">UMIDITÀ</span><span class="radar-val" id="r-hum">--</span></div>
+                <div class="radar-info pos-20"><span style="font-size:11px; color:#38bdf8; font-weight:bold; letter-spacing:1px">TEMP.</span><span class="radar-val" id="r-temp">--</span></div>
                 
-                <div class="sky-orbit"><div id="celestial-body" style="position: absolute; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; top: 50%; left: 50%; margin-top: -25px; margin-left: -25px; z-index: 10; font-size: 42px; transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);">☀️</div></div>
+                <div class="sky-orbit"><div id="celestial-body">☀️</div></div>
                 
                 <div class="horizon-line">
-                    <span class="horizon-label" style="left: 0px">ALBA<br><span id="sunrise-txt" style="color:white; font-size:16px">--:--</span></span>
-                    <span class="horizon-label" style="right: 0px; text-align:right">TRAMONTO<br><span id="sunset-txt" style="color:white; font-size:16px">--:--</span></span>
+                    <span class="horizon-label" style="left: -10px">ALBA<br><span id="sunrise-txt" style="color:white; font-size:16px">--:--</span></span>
+                    <span class="horizon-label" style="right: -10px; text-align:right">TRAMONTO<br><span id="sunset-txt" style="color:white; font-size:16px">--:--</span></span>
                 </div>
 
                 <div class="radar-circle">
@@ -158,10 +153,10 @@
                 <div class="est-box"><span style="font-size:10px; color:#38bdf8; font-weight:900">100%</span><span class="est-time" id="charge_100_txt">--</span></div>
             </div>
             <p id="charge_status_txt" style="font-size:12px; color:#38bdf8; text-align:center; margin-top:20px; font-weight:bold; border: 1px dashed #334155; padding: 10px; border-radius: 12px;">Calcolo energia...</p>
-            <div class="balance-grid">
-                <div style="text-align:center"><span style="font-size:10px; color:#38bdf8; font-weight:900">PRODUZIONE</span><span class="bal-val" id="daily_wh" style="color:#fbbf24; font-size:18px">0 Wh</span></div>
-                <div style="text-align:center"><span style="font-size:10px; color:#38bdf8; font-weight:900">CONSUMO</span><span class="bal-val" id="daily_cons" style="color:#ef4444; font-size:18px">0 Wh</span></div>
-                <div style="text-align:center"><span style="font-size:10px; color:#38bdf8; font-weight:900">NETTO</span><span class="bal-val" id="daily_net" style="color:white; font-size:18px">0 Wh</span></div>
+            <div class="balance-grid" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 25px; border-top: 1px solid #334155; padding-top: 20px;">
+                <div style="text-align:center"><span style="font-size:10px; color:#38bdf8; font-weight:900">PRODUZIONE</span><span class="bal-val" id="daily_wh" style="color:#fbbf24; font-size:18px; font-weight:900; display:block; margin-top:5px">0 Wh</span></div>
+                <div style="text-align:center"><span style="font-size:10px; color:#38bdf8; font-weight:900">CONSUMO</span><span class="bal-val" id="daily_cons" style="color:#ef4444; font-size:18px; font-weight:900; display:block; margin-top:5px">0 Wh</span></div>
+                <div style="text-align:center"><span style="font-size:10px; color:#38bdf8; font-weight:900">NETTO</span><span class="bal-val" id="daily_net" style="color:white; font-size:18px; font-weight:900; display:block; margin-top:5px">0 Wh</span></div>
             </div>
         </div>
         <div class="card">
@@ -305,7 +300,7 @@
         document.getElementById('w_out').innerText = showWhInRadar ? Math.round(cumulativeWh) + " Wh" : Math.round(curW) + " W";
         
         const sunPos = (now.getHours() + now.getMinutes()/60) * 15 - 180;
-        document.getElementById('celestial-body').style.transform = `rotate(${sunPos}deg) translateY(-135px) rotate(${-sunPos}deg)`;
+        document.getElementById('celestial-body').style.transform = `rotate(${sunPos}deg) translateY(-145px) rotate(${-sunPos}deg)`;
 
         const netAmps = (curW / 12.8) - baseLoadA;
         if (netAmps > 0) {
