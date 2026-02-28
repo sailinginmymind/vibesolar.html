@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vibe Solar - Resa Pannelli</title>
+    <title>Vibe Solar - Night & Day</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; background-color: #0f172a; color: white; font-family: sans-serif; display: flex; justify-content: center; min-height: 100vh; padding-bottom: 140px; }
@@ -15,10 +15,31 @@
         h2 { margin: 10px 0 5px 0; letter-spacing: 4px; color: #38bdf8; text-align: center; font-size: 1.8rem; font-weight: 900; }
         .card { background: #1e293b; border-radius: 28px; padding: 25px; border: 1px solid #334155; margin-bottom: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
         
-        /* RADAR SOLARE */
-        .solar-system { position: relative; height: 260px; width: 100%; margin: 10px 0; display: flex; justify-content: center; overflow: hidden; border-radius: 0 0 20px 20px; }
-        #sun-body { position: absolute; width: 155px; height: 155px; background: radial-gradient(circle, #fbbf24 20%, #f59e0b 60%, #ea580c 100%); border-radius: 50%; z-index: 2; box-shadow: 0 0 40px #fbbf24; transition: all 0.6s ease-out; transform: translate(-50%, -50%); }
+        /* RADAR SOLARE & NOTTE */
+        .solar-system { 
+            position: relative; height: 260px; width: 100%; margin: 10px 0; 
+            display: flex; justify-content: center; overflow: hidden; border-radius: 20px;
+            background: #1e293b; transition: background 1s;
+        }
+        .is-night { background: #020617 !important; }
+
+        #stars-container { position: absolute; width: 100%; height: 100%; top: 0; opacity: 0; transition: opacity 1s; }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle 2s infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+        #sun-body { 
+            position: absolute; width: 155px; height: 155px; 
+            background: radial-gradient(circle, #fbbf24 20%, #f59e0b 60%, #ea580c 100%); 
+            border-radius: 50%; z-index: 2; box-shadow: 0 0 40px #fbbf24; 
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform: translate(-50%, -50%); 
+        }
+
         .horizon-mask { position: absolute; bottom: 0; left: 0; right: 0; height: 75px; background: #1e293b; z-index: 4; border-top: 3px solid #fbbf24; }
+        .is-night .horizon-mask { background: #020617; }
+
+        .horizon-data { position: absolute; bottom: 10px; width: 100%; display: flex; justify-content: space-between; z-index: 6; padding: 0 20px; }
+        .h-label { font-size: 9px; color: #fbbf24; font-weight: 900; text-align: center; }
+
         .core-display { position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%); background: #0f172a; border: 4px solid #334155; width: 105px; height: 105px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5; }
 
         /* INPUT MANUALI */
@@ -42,12 +63,17 @@
     <h2 id="camper-name-display">VIBE SOLAR</h2>
 
     <div id="view-live" class="view active">
-        <button class="btn-live" onclick="goLive()">📡 SINCRONIZZA POSIZIONE (GPS)</button>
+        <button class="btn-live" onclick="goLive()">📡 AGGIORNA GPS E METEO</button>
         
         <div class="card">
-            <div class="solar-system">
+            <div id="sky-box" class="solar-system">
+                <div id="stars-container"></div>
                 <div id="sun-body"></div> 
                 <div class="horizon-mask"></div>
+                <div class="horizon-data">
+                    <div class="h-label">ALBA<br><span id="sunrise-txt" style="color:white; font-size:13px">06:00</span></div>
+                    <div class="h-label">TRAMONTO<br><span id="sunset-txt" style="color:white; font-size:13px">20:00</span></div>
+                </div>
                 <div class="core-display">
                     <span id="display-hour-center" style="font-size:20px; font-weight:900; color:#fbbf24">12:00</span>
                     <span id="r-cloud-percent" style="font-size:14px; color:#38bdf8; font-weight:900">--%</span>
@@ -58,53 +84,18 @@
             <span id="w_out" class="big-w">0 W</span>
 
             <div class="manual-controls">
-                <div class="input-group">
-                    <label>Ora</label>
-                    <input type="time" id="input-time" class="manual-input" value="12:00" onchange="manualUpdate()">
-                </div>
-                <div class="input-group">
-                    <label>Data (GG/MM/AAAA)</label>
-                    <input type="date" id="input-date" class="manual-input" onchange="manualUpdate()">
-                </div>
-                <div class="input-group">
-                    <label>Latitudine</label>
-                    <input type="number" id="input-lat" class="manual-input" value="43.7" step="0.01" onchange="manualUpdate()">
-                </div>
-                <div class="input-group">
-                    <label>Longitudine</label>
-                    <input type="number" id="input-lng" class="manual-input" value="10.4" step="0.01" onchange="manualUpdate()">
-                </div>
+                <div class="input-group"><label>Ora</label><input type="time" id="input-time" class="manual-input" onchange="manualUpdate()"></div>
+                <div class="input-group"><label>Data</label><input type="date" id="input-date" class="manual-input" onchange="manualUpdate()"></div>
+                <div class="input-group"><label>Latitudine</label><input type="number" id="input-lat" class="manual-input" value="43.71" step="0.01" onchange="manualUpdate()"></div>
+                <div class="input-group"><label>Longitudine</label><input type="number" id="input-lng" class="manual-input" value="10.40" step="0.01" onchange="manualUpdate()"></div>
             </div>
         </div>
     </div>
 
-    <div id="view-energy" class="view">
-        <div class="card">
-            <h3 style="text-align:center; color:#38bdf8">REPORT CARICA</h3>
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; text-align:center">
-                <div class="card" style="padding:10px; margin:0">80%<br><b id="charge_80_txt">--</b></div>
-                <div class="card" style="padding:10px; margin:0; border-color:#fbbf24">90%<br><b id="charge_90_txt">--</b></div>
-                <div class="card" style="padding:10px; margin:0">100%<br><b id="charge_100_txt">--</b></div>
-            </div>
-        </div>
-    </div>
+    <div id="view-energy" class="view"><div class="card"><h3 style="text-align:center; color:#38bdf8">REPORT CARICA</h3><div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; text-align:center"><div class="card" style="padding:10px; margin:0">80%<br><b id="charge_80_txt">--</b></div><div class="card" style="padding:10px; margin:0; border-color:#fbbf24">90%<br><b id="charge_90_txt">--</b></div><div class="card" style="padding:10px; margin:0">100%<br><b id="charge_100_txt">--</b></div></div></div></div>
+    <div id="view-garage" class="view"><div class="card"><label style="font-size:10px; color:#38bdf8; font-weight:900">NOME CAMPER</label><input type="text" id="camper_name_input" onchange="saveGarage()" class="manual-input" style="margin-bottom:20px"><p>🔋 Batteria: <b id="batt_val">100</b> Ah <button onclick="editBatt()">EDIT</button></p><p>☀️ Pannelli: <b id="panel_val">100</b> Wp <button onclick="editPanels()">EDIT</button></p></div></div>
 
-    <div id="view-garage" class="view">
-        <div class="card">
-            <label style="font-size:10px; color:#38bdf8; font-weight:900">NOME CAMPER</label>
-            <input type="text" id="camper_name_input" onchange="saveGarage()" class="manual-input" style="margin-bottom:20px">
-            <p>🔋 Batteria: <b id="batt_val">100</b> Ah <button onclick="editBatt()">EDIT</button></p>
-            <p>☀️ Pannelli: <b id="panel_val">100</b> Wp <button onclick="editPanels()">EDIT</button></p>
-        </div>
-    </div>
-
-    <div class="navbar-wrapper">
-        <div class="navbar">
-            <div class="nav-item active" onclick="switchView('live', this)"><span>🛰️</span>DASHBOARD</div>
-            <div class="nav-item" onclick="switchView('energy', this)"><span>📊</span>REPORT</div>
-            <div class="nav-item" onclick="switchView('garage', this)"><span>🚐</span>GARAGE</div>
-        </div>
-    </div>
+    <div class="navbar-wrapper"><div class="navbar"><div class="nav-item active" onclick="switchView('live', this)"><span>🛰️</span>DASHBOARD</div><div class="nav-item" onclick="switchView('energy', this)"><span>📊</span>REPORT</div><div class="nav-item" onclick="switchView('garage', this)"><span>🚐</span>GARAGE</div></div></div>
 </div>
 
 <script>
@@ -119,13 +110,29 @@
         el.classList.add('active');
     }
 
+    // Generatore stelle
+    function createStars() {
+        const container = document.getElementById('stars-container');
+        for (let i = 0; i < 40; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 60 + '%';
+            star.style.width = star.style.height = Math.random() * 3 + 'px';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            container.appendChild(star);
+        }
+    }
+
     async function goLive() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(async (p) => {
                 document.getElementById('input-lat').value = p.coords.latitude.toFixed(4);
                 document.getElementById('input-lng').value = p.coords.longitude.toFixed(4);
-                const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.coords.latitude}&longitude=${p.coords.longitude}&current=cloud_cover&timezone=auto`);
+                const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.coords.latitude}&longitude=${p.coords.longitude}&current=cloud_cover&daily=sunrise,sunset&timezone=auto`);
                 const d = await r.json();
+                document.getElementById('sunrise-txt').innerText = d.daily.sunrise[0].split('T')[1];
+                document.getElementById('sunset-txt').innerText = d.daily.sunset[0].split('T')[1];
                 document.getElementById('r-cloud-percent').innerText = d.current.cloud_cover + "%";
                 weatherFactor = (100 - d.current.cloud_cover) / 100;
                 manualUpdate();
@@ -139,34 +146,52 @@
         const hDec = hh + (mm/60);
         document.getElementById('display-hour-center').innerText = timeVal;
 
-        // Resa in base all'ora (arco)
-        const progress = Math.max(0, Math.min(1, (hDec - 6) / 14));
-        const arcHeight = Math.sin(progress * Math.PI);
-
-        // Spostamento Sole
+        // Limiti alba/tramonto (da rendere dinamici se vuoi, per ora fissi 6-20)
+        const sunrise = 6;
+        const sunset = 20;
+        
+        const sky = document.getElementById('sky-box');
         const sun = document.getElementById('sun-body');
-        sun.style.left = `${progress * 100}%`;
-        sun.style.top = `${230 - (arcHeight * 200)}px`; 
+        const stars = document.getElementById('stars-container');
 
-        // Watt Finali = Pannelli * Altezza Sole * Meteo
-        const power = Math.max(0, arcHeight * panelWp * weatherFactor);
-        document.getElementById('w_out').innerText = Math.round(power) + " W";
+        if (hDec < sunrise || hDec > sunset) {
+            // NOTTE
+            sky.classList.add('is-night');
+            stars.style.opacity = "1";
+            sun.style.top = "350px"; // Sparisce sotto
+            document.getElementById('w_out').innerText = "0 W";
+            updateReport(0);
+        } else {
+            // GIORNO
+            sky.classList.remove('is-night');
+            stars.style.opacity = "0";
+            const progress = (hDec - sunrise) / (sunset - sunrise);
+            const arcHeight = Math.sin(progress * Math.PI);
+            sun.style.left = `${progress * 100}%`;
+            sun.style.top = `${230 - (arcHeight * 200)}px`;
+            
+            const power = Math.max(0, arcHeight * panelWp * weatherFactor);
+            document.getElementById('w_out').innerText = Math.round(power) + " W";
+            updateReport(power);
+        }
+    }
 
-        // Aggiorna Report
-        const netA = (power / 12.8) - 0.4; // 0.4A consumo camper
+    function updateReport(p) {
+        const netA = (p / 12.8) - 0.4;
         document.getElementById('charge_80_txt').innerText = netA > 0 ? ((battAh*0.3)/netA).toFixed(1) + "h" : "∞";
         document.getElementById('charge_90_txt').innerText = netA > 0 ? ((battAh*0.4)/netA).toFixed(1) + "h" : "∞";
         document.getElementById('charge_100_txt').innerText = netA > 0 ? ((battAh*0.5)/netA).toFixed(1) + "h" : "∞";
     }
 
-    function editBatt() { let v = prompt("Capacità Batteria (Ah):", battAh); if(v){ battAh=v; localStorage.setItem('vibe_batt_ah',v); document.getElementById('batt_val').innerText=v; manualUpdate();} }
-    function editPanels() { let v = prompt("Potenza Pannelli (Wp):", panelWp); if(v){ panelWp=v; localStorage.setItem('vibe_panel_wp',v); document.getElementById('panel_val').innerText=v; manualUpdate();} }
+    function editBatt() { let v = prompt("Ah Batteria:", battAh); if(v){ battAh=v; localStorage.setItem('vibe_batt_ah',v); document.getElementById('batt_val').innerText=v; manualUpdate();} }
+    function editPanels() { let v = prompt("Watt Pannelli:", panelWp); if(v){ panelWp=v; localStorage.setItem('vibe_panel_wp',v); document.getElementById('panel_val').innerText=v; manualUpdate();} }
     function saveGarage() { localStorage.setItem('vibe_camper_name', document.getElementById('camper_name_input').value); document.getElementById('camper-name-display').innerText = document.getElementById('camper_name_input').value.toUpperCase(); }
 
     window.onload = () => {
-        const today = new Date();
-        document.getElementById('input-date').value = today.toISOString().split('T')[0];
-        document.getElementById('input-time').value = today.getHours().toString().padStart(2,'0') + ":" + today.getMinutes().toString().padStart(2,'0');
+        createStars();
+        const now = new Date();
+        document.getElementById('input-date').value = now.toISOString().split('T')[0];
+        document.getElementById('input-time').value = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
         document.getElementById('camper_name_input').value = localStorage.getItem('vibe_camper_name') || "VIBE SOLAR";
         document.getElementById('batt_val').innerText = battAh;
         document.getElementById('panel_val').innerText = panelWp;
