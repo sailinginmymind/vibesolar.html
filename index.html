@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vibe Solar - Energy Bridge</title>
+    <title>Vibe Solar - Smart Config</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
@@ -45,24 +45,24 @@
 
         .big-w { font-size: 52px; color: #38bdf8; font-weight: 900; margin: 5px 0; display: block; text-align: center; }
 
-        /* BATTERY & REPORT */
-        .battery-box { background: #0f172a; border-radius: 16px; padding: 15px; border: 1px solid #334155; margin-top: 5px; }
-        .batt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .batt-value { color: #fbbf24; font-size: 18px; font-weight: 900; }
-        .batt-edit { background: none; border: 1px solid #38bdf8; color: #38bdf8; border-radius: 6px; padding: 3px 10px; font-size: 10px; cursor: pointer; }
-        .charge-time { font-size: 24px; color: #38bdf8; font-weight: 900; display: block; }
+        /* CONFIG ELEMENTS */
+        .config-box { background: #0f172a; border-radius: 16px; padding: 15px; border: 1px solid #334155; margin-top: 5px; }
+        .config-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .config-value { color: #fbbf24; font-size: 18px; font-weight: 900; }
+        .config-btn { background: none; border: 1px solid #38bdf8; color: #38bdf8; border-radius: 6px; padding: 3px 10px; font-size: 10px; cursor: pointer; transition: all 0.2s; }
+        .config-btn:active { background: #38bdf8; color: #0f172a; }
 
-        /* GRAPH INTERACTION */
+        /* GRAPH */
         .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; position: relative; cursor: pointer; }
         .bar { width: 75%; background: #38bdf8; border-radius: 2px; transition: background 0.2s, transform 0.1s; position: relative; }
         .bar-value { position: absolute; top: -18px; font-size: 9px; color: #fbbf24; font-weight: 900; opacity: 0; transition: opacity 0.2s; white-space: nowrap; pointer-events: none; }
         .bar-container:hover .bar, .bar-container:active .bar { background: #fbbf24; transform: scaleX(1.1); }
         .bar-container:hover .bar-value, .bar-container:active .bar-value { opacity: 1; }
 
-        /* INPUTS */
+        /* INPUTS & RANGE */
         .input-row { display: flex; gap: 8px; width: 100%; margin-bottom: 10px; }
-        input { border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 14px; font-weight: bold; padding: 12px; width: 100%; outline: none; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        input[type="date"], input[type="time"], input[type="number"] { border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 14px; font-weight: bold; padding: 12px; width: 100%; outline: none; }
+        input[type="range"] { width: 100%; height: 6px; background: #334155; border-radius: 5px; outline: none; margin-top: 10px; }
 
         /* NAVBAR */
         .navbar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; height: 80px; background: #1e293b; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #334155; z-index: 1000; }
@@ -92,7 +92,7 @@
                 </div>
             </div>
             <span id="w_out" class="big-w">0 W</span>
-            <div class="grid-2" style="border-top: 1px solid #334155; padding-top: 15px; margin-top:10px; text-align: center;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid #334155; padding-top: 15px; margin-top:10px; text-align: center;">
                 <div><small class="section-title">Alba</small><b id="sunrise-txt" style="font-size:18px; color:#fbbf24">--:--</b></div>
                 <div><small class="section-title">Tramonto</small><b id="sunset-txt" style="font-size:18px; color:#fbbf24">--:--</b></div>
             </div>
@@ -106,31 +106,44 @@
 
     <div id="view-energy" class="view">
         <div id="source-info" class="source-banner">Dati non sincronizzati. Torna nel Radar e premi LIVE.</div>
+        
         <div class="card" style="text-align: center;">
             <span class="section-title">Produzione Giornaliera</span>
             <span style="font-size: 42px; color: #fbbf24; font-weight: 900;" id="daily_wh">0 Wh</span>
             <div id="chart" style="display:flex; align-items:flex-end; justify-content:space-between; height:120px; margin-top:25px; border-bottom:2px solid #334155; padding-bottom: 5px;"></div>
         </div>
+
         <div class="card">
-            <span class="section-title">Stima Ricarica</span>
-            <div class="battery-box">
-                <div class="batt-header">
-                    <span class="section-title" style="margin:0">Batteria Servizi</span>
-                    <div><span class="batt-value" id="batt_cap_display">100</span> <small class="unit">Ah</small></div>
+            <span class="section-title">Configurazione Sistema</span>
+            
+            <div class="config-box">
+                <div class="config-header">
+                    <span class="section-title" style="margin:0">Capacità Batteria</span>
+                    <div><span class="config-value" id="batt_cap_display">100</span> <small class="unit">Ah</small></div>
                 </div>
-                <button class="batt-edit" onclick="changeBattery()">⚙️ Modifica Capacità</button>
-                <div style="margin-top:15px; border-top:1px solid #334155; padding-top:12px;">
-                    <span class="section-title" style="margin-bottom:2px">Tempo per carica completa</span>
-                    <span class="charge-time" id="charge_time_txt">--</span>
-                    <span id="charge_status_txt" style="font-size:11px; color:#94a3b8; font-style:italic">In attesa di dati...</span>
+                <button class="config-btn" onclick="changeBattery()">⚙️ Modifica Batteria</button>
+            </div>
+
+            <div class="config-box" style="margin-top:12px;">
+                <div class="config-header">
+                    <span class="section-title" style="margin:0">Potenza Pannelli</span>
+                    <div><span class="config-value" id="panel_wp_display">100</span> <small class="unit">Wp</small></div>
                 </div>
+                <button class="config-btn" onclick="changePanels()">⚙️ Modifica Pannelli</button>
+            </div>
+
+            <div class="config-box" style="margin-top:12px;">
+                <span class="section-title">Inclinazione (Tilt): <b id="tilt_txt" style="color:#38bdf8">0°</b></span>
+                <input type="range" id="tilt_range" min="0" max="90" value="0" oninput="update()">
             </div>
         </div>
+
         <div class="card">
-            <span class="section-title">Configurazione Camper</span>
-            <div class="grid-2">
-                <div><label class="section-title">Watt (Wp)</label><input type="number" id="p_watt"></div>
-                <div><label class="section-title">Tilt <b id="tilt_txt" style="color:#38bdf8">0°</b></label><input type="range" id="tilt_range" min="0" max="90" value="0"></div>
+            <span class="section-title">Stima Ricarica</span>
+            <div class="config-box">
+                <span class="section-title" style="margin-bottom:2px">Tempo per carica completa</span>
+                <span id="charge_time_txt" style="font-size:24px; color:#38bdf8; font-weight:900; display:block;">--</span>
+                <span id="charge_status_txt" style="font-size:11px; color:#94a3b8; font-style:italic">In attesa di dati...</span>
             </div>
         </div>
     </div>
@@ -156,6 +169,16 @@
             batteryAh = val;
             localStorage.setItem('vibe_batt_ah', val);
             document.getElementById('batt_cap_display').innerText = val;
+            update();
+        }
+    }
+
+    function changePanels() {
+        let val = prompt("Inserisci la potenza totale dei tuoi pannelli (Wp):", panelWp);
+        if (val && !isNaN(val)) {
+            panelWp = val;
+            localStorage.setItem('vibe_panel_wp', val);
+            document.getElementById('panel_wp_display').innerText = val;
             update();
         }
     }
@@ -208,9 +231,6 @@
     }
 
     function update() {
-        const pWatt = parseFloat(document.getElementById('p_watt').value) || 0;
-        localStorage.setItem('vibe_panel_wp', pWatt); // Salva i watt appena cambiati
-
         const tilt = parseFloat(document.getElementById('tilt_range').value);
         const lat = parseFloat(document.getElementById('la_val').value) || 41.89;
         const lon = parseFloat(document.getElementById('lo_val').value) || 12.49;
@@ -221,15 +241,15 @@
         
         const now = new Date(dv + 'T' + tv);
         
-        // --- IL PONTE: CALCOLO WATT ISTANTANEI PER RADAR ---
+        // CALCOLO RADAR
         const currentAlt = getSunAlt(now, lat, lon);
         let currentW = 0;
         if (currentAlt > 0) {
-            currentW = pWatt * Math.max(0, Math.cos((Math.PI/2) - currentAlt - (tilt * Math.PI/180))) * weatherFactor;
+            currentW = panelWp * Math.max(0, Math.cos((Math.PI/2) - currentAlt - (tilt * Math.PI/180))) * weatherFactor;
         }
         document.getElementById('w_out').innerText = Math.round(currentW) + " W";
 
-        // --- REPORT GIORNALIERO ---
+        // REPORT GIORNALIERO
         let totalWh = 0;
         const chart = document.getElementById('chart'); chart.innerHTML = "";
         for (let i = 6; i <= 21; i++) {
@@ -237,13 +257,13 @@
             const alt = getSunAlt(sim, lat, lon);
             let wh = 0;
             if (alt > 0) {
-                wh = pWatt * Math.max(0, Math.cos((Math.PI/2) - alt - (tilt * Math.PI/180))) * weatherFactor;
+                wh = panelWp * Math.max(0, Math.cos((Math.PI/2) - alt - (tilt * Math.PI/180))) * weatherFactor;
                 totalWh += wh;
             }
             chart.innerHTML += `
                 <div class="bar-container" ontouchstart="">
                     <span class="bar-value">${Math.round(wh)}W</span>
-                    <div class="bar" style="height:${(wh/(pWatt||1))*100}%"></div>
+                    <div class="bar" style="height:${(wh/(panelWp||1))*100}%"></div>
                     <span style="font-size:8px; color:#94a3b8; margin-top:4px">${i}</span>
                 </div>`;
         }
@@ -284,7 +304,7 @@
 
     window.onload = () => {
         document.getElementById('batt_cap_display').innerText = batteryAh;
-        document.getElementById('p_watt').value = panelWp; // Carica i watt salvati
+        document.getElementById('panel_wp_display').innerText = panelWp;
         const n = new Date();
         document.getElementById('d_val').value = n.toISOString().split('T')[0];
         document.getElementById('t_val').value = n.toTimeString().slice(0,5);
