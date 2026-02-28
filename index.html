@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vibe Solar - Precision Edition</title>
+    <title>Vibe Solar - Precision Dashboard</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
@@ -28,8 +28,10 @@
         .radar-container { position: relative; width: 300px; height: 300px; margin: 10px auto; display: flex; align-items: center; justify-content: center; }
         .sky-orbit { position: absolute; width: 230px; height: 230px; border-radius: 50%; border: 2px solid rgba(56, 189, 248, 0.15); }
         .horizon-line { position: absolute; width: 270px; height: 2px; background: linear-gradient(90deg, transparent, #fbbf24, transparent); top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1; }
+        .horizon-label { position: absolute; font-size: 9px; color: #fbbf24; font-weight: 900; top: -18px; text-transform: uppercase; }
+        
         .radar-circle { width: 135px; height: 135px; border-radius: 50%; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 4px solid #334155; z-index: 2; }
-        .big-w { font-size: 52px; color: #38bdf8; font-weight: 900; margin: 5px 0; display: block; text-align: center; cursor: pointer; }
+        .big-w { font-size: 52px; font-weight: 900; margin: 5px 0; display: block; text-align: center; cursor: pointer; transition: color 0.3s; }
         
         .radar-info { position: absolute; color: #94a3b8; font-weight: bold; text-align: center; width: 80px; z-index: 3; }
         .radar-label { font-size: 10px; color: #38bdf8; display: block; margin-bottom: 2px; }
@@ -38,15 +40,19 @@
         .pos-16 { bottom: 10px; right: -20px; }
         .pos-20 { bottom: 10px; left: -20px; }
 
-        /* CHART INTERATTIVO */
-        #chart { display:flex; align-items:flex-end; justify-content:space-between; height:100px; margin-top:20px; border-bottom:1px solid #334155; padding-bottom: 5px; }
-        .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; position: relative; cursor: pointer; }
-        .bar { width: 70%; background: #38bdf8; border-radius: 2px 2px 0 0; transition: background 0.2s; }
-        .bar-val-pop { position: absolute; top: -20px; font-size: 9px; color: #fbbf24; font-weight: 900; opacity: 0; white-space: nowrap; }
-        .bar-container:active .bar, .bar-container:hover .bar { background: #fbbf24; }
-        .bar-container:active .bar-val-pop, .bar-container:hover .bar-val-pop { opacity: 1; }
+        /* REPORT ESTIMATES */
+        .recharge-main { font-size: 38px; color: #38bdf8; font-weight: 900; display: block; line-height: 1; margin: 10px 0; }
+        .recharge-secondary { font-size: 14px; color: #94a3b8; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #334155; margin-top: 10px; }
 
-        /* COMPACT TILT */
+        /* CHART */
+        #chart { display:flex; align-items:flex-end; justify-content:space-between; height:100px; margin-top:20px; border-bottom:1px solid #334155; padding-bottom: 5px; }
+        .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; position: relative; }
+        .bar { width: 70%; background: #38bdf8; border-radius: 2px 2px 0 0; }
+        .bar-val-pop { position: absolute; top: -20px; font-size: 9px; color: #fbbf24; font-weight: 900; opacity: 0; }
+        .bar-container:active .bar { background: #fbbf24; }
+        .bar-container:active .bar-val-pop { opacity: 1; }
+
+        /* TILT COMPACT */
         .tilt-box { background: #0f172a; border-radius: 12px; padding: 10px 15px; border: 1px solid #334155; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
 
         /* INPUTS */
@@ -72,36 +78,40 @@
                 <div class="radar-info pos-12"><span class="radar-label">VENTO</span><span class="radar-val" id="r-wind">--</span></div>
                 <div class="radar-info pos-16"><span class="radar-label">UMIDITÀ</span><span class="radar-val" id="r-hum">--</span></div>
                 <div class="radar-info pos-20"><span class="radar-label">TEMP.</span><span class="radar-val" id="r-temp">--</span></div>
+                
                 <div class="sky-orbit"><div id="celestial-body" style="position: absolute; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; top: 50%; left: 50%; margin-top: -20px; margin-left: -20px; z-index: 10; font-size: 32px; transition: transform 0.5s;">☀️</div></div>
-                <div class="horizon-line"></div>
+                
+                <div class="horizon-line">
+                    <span class="horizon-label" style="left:5px">Alba <br><small id="sunrise-txt" style="color:white">--:--</small></span>
+                    <span class="horizon-label" style="right:5px; text-align:right">Tramonto <br><small id="sunset-txt" style="color:white">--:--</small></span>
+                </div>
+
                 <div class="radar-circle">
                     <span id="r-icon-center" style="font-size:48px">☀️</span>
                     <span id="r-cloud-percent" style="font-size: 16px; color: white; font-weight: 900; margin-top:5px;">--%</span>
                     <span class="radar-label" style="font-size: 8px;">NUBI</span>
                 </div>
             </div>
-            <span id="w_out" class="big-w" onclick="toggleRadarUnit()">0 W</span>
-            <span style="display:block; text-align:center; font-size:9px; color:#94a3b8; margin-top:-10px;">Tocca per W/Wh</span>
+            <span id="w_out" class="big-w" onclick="toggleRadarUnit()" style="color: #38bdf8;">0 W</span>
+            <span style="display:block; text-align:center; font-size:9px; color:#94a3b8; margin-top:-10px;">Tocca per W (Azzurro) / Wh (Oro)</span>
         </div>
         <div class="card">
             <span class="section-title">Parametri Simulazione</span>
-            <div class="input-row">
-                <input type="date" id="d_val">
-                <input type="time" id="t_val">
-                <button class="btn-calc" onclick="syncSpecificDate()">🔍</button>
-            </div>
-            <div class="input-row">
-                <input type="number" id="la_val" step="0.0001" placeholder="Latitudine">
-                <input type="number" id="lo_val" step="0.0001" placeholder="Longitudine">
-            </div>
+            <div class="input-row"><input type="date" id="d_val"><input type="time" id="t_val"><button class="btn-calc" onclick="syncSpecificDate()">🔍</button></div>
+            <div class="input-row"><input type="number" id="la_val" step="0.0001" placeholder="Latitudine"><input type="number" id="lo_val" step="0.0001" placeholder="Longitudine"></div>
         </div>
     </div>
 
     <div id="view-energy" class="view">
         <div class="card" style="text-align:center;">
-            <span id="recharge-status-label" class="section-title" style="color:#fbbf24">Tempo alla carica 100%</span>
-            <span id="charge_time_txt" style="font-size:48px; color:#38bdf8; font-weight:900; display:block;">--:--</span>
-            <span id="charge_status_txt" style="font-size:11px; color:#94a3b8; font-style:italic">Dati dal Radar necessari</span>
+            <span class="section-title">Previsione Ricarica (da 50%)</span>
+            <span class="recharge-main" id="charge_100_txt">--:--</span>
+            <small style="color:#94a3b8">mancano alla carica 100%</small>
+            
+            <div class="recharge-secondary">
+                <div><small class="radar-label">AL 90%</small><b id="charge_90_txt" style="color:white">--</b></div>
+                <div><small class="radar-label">AL 80%</small><b id="charge_80_txt" style="color:white">--</b></div>
+            </div>
         </div>
 
         <div class="card">
@@ -113,8 +123,7 @@
         </div>
 
         <div class="card">
-            <span class="section-title">Bilancio Giornaliero Stimato</span>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; text-align:center; margin-top:10px;">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; text-align:center;">
                 <div><small class="radar-label">PRODUZIONE</small><b id="daily_wh" style="font-size:20px; color:#fbbf24">0 Wh</b></div>
                 <div><small class="radar-label">CONSUMO</small><b id="daily_cons" style="font-size:20px; color:#ef4444">0 Wh</b></div>
             </div>
@@ -123,9 +132,8 @@
 
     <div id="view-garage" class="view">
         <div class="card">
-            <span class="section-title">Identità Camper</span>
+            <span class="section-title">Hardware</span>
             <input type="text" id="camper_name_input" placeholder="Nome Camper" onchange="saveGarage()">
-            
             <div style="margin-top:15px; display:grid; gap:10px;">
                 <div style="background:#0f172a; padding:12px; border-radius:12px; border:1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
                     <span class="section-title" style="margin:0">Batteria: <b id="batt_cap_display" style="color:#fbbf24">100</b> Ah</span>
@@ -154,13 +162,12 @@
     let weatherFactor = 1.0, cloudCoverVal = 0, showWhInRadar = false;
     let batteryAh = localStorage.getItem('vibe_batt_ah') || 100;
     let panelWp = localStorage.getItem('vibe_panel_wp') || 100;
-    let camperName = localStorage.getItem('vibe_camper_name') || "IL MIO CAMPER";
     let baseLoadA = localStorage.getItem('vibe_base_load') || 0.5;
 
     function saveGarage() {
-        camperName = document.getElementById('camper_name_input').value;
-        localStorage.setItem('vibe_camper_name', camperName);
-        document.getElementById('camper-name-display').innerText = camperName.toUpperCase();
+        let name = document.getElementById('camper_name_input').value;
+        localStorage.setItem('vibe_camper_name', name);
+        document.getElementById('camper-name-display').innerText = name.toUpperCase();
     }
 
     function changeBattery() {
@@ -178,7 +185,11 @@
         if(val) { baseLoadA = val; localStorage.setItem('vibe_base_load', val); update(); }
     }
 
-    function toggleRadarUnit() { showWhInRadar = !showWhInRadar; update(); }
+    function toggleRadarUnit() { 
+        showWhInRadar = !showWhInRadar; 
+        document.getElementById('w_out').style.color = showWhInRadar ? "#fbbf24" : "#38bdf8";
+        update(); 
+    }
 
     async function goLive() {
         const n = new Date();
@@ -201,8 +212,12 @@
 
     async function fetchFullData(lat, lon, date, isLive) {
         try {
-            const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=cloud_cover,temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=auto&start_date=${date}&end_date=${date}`);
+            const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=cloud_cover,temperature_2m,relative_humidity_2m,wind_speed_10m&daily=sunrise,sunset&timezone=auto&start_date=${date}&end_date=${date}`);
             const d = await r.json();
+            if (d.daily) {
+                document.getElementById('sunrise-txt').innerText = d.daily.sunrise[0].split('T')[1];
+                document.getElementById('sunset-txt').innerText = d.daily.sunset[0].split('T')[1];
+            }
             if (isLive && d.current) {
                 document.getElementById('r-temp').innerText = Math.round(d.current.temperature_2m) + "°";
                 document.getElementById('r-hum').innerText = d.current.relative_humidity_2m + "%";
@@ -232,7 +247,7 @@
             let w = (alt > 0) ? panelWp * Math.max(0, Math.cos((Math.PI/2) - alt - (tilt * Math.PI/180))) * weatherFactor : 0;
             totalWh += w;
             if (i <= now.getHours()) cumulativeWh += w;
-            chart.innerHTML += `<div class="bar-container"><span class="bar-val-pop">${Math.round(w)}W</span><div class="bar" style="height:${(w/panelWp)*100}px"></div><small style="font-size:8px; margin-top:3px; color:#94a3b8">${i}</small></div>`;
+            chart.innerHTML += `<div class="bar-container"><span class="bar-val-pop">${Math.round(w)}W</span><div class="bar" style="height:${(w/panelWp)*100}px"></div><small style="font-size:7px; margin-top:3px; color:#94a3b8">${i}</small></div>`;
         }
 
         const currentAlt = getSunAlt(now, lat, lon);
@@ -246,12 +261,16 @@
 
         const netAmps = (curW / 12.8) - baseLoadA;
         if (netAmps > 0) {
-            const hoursToCharge = (batteryAh * 0.5) / netAmps;
-            document.getElementById('charge_time_txt').innerText = hoursToCharge > 12 ? "+12h" : hoursToCharge.toFixed(1) + "h";
-            document.getElementById('charge_status_txt').innerText = `Carica a +${netAmps.toFixed(1)}A netti`;
+            const h100 = (batteryAh * 0.5) / netAmps;
+            const h90 = (batteryAh * 0.4) / netAmps;
+            const h80 = (batteryAh * 0.3) / netAmps;
+            document.getElementById('charge_100_txt').innerText = h100 > 12 ? "+12h" : h100.toFixed(1) + "h";
+            document.getElementById('charge_90_txt').innerText = h90.toFixed(1) + "h";
+            document.getElementById('charge_80_txt').innerText = h80.toFixed(1) + "h";
         } else {
-            document.getElementById('charge_time_txt').innerText = "---";
-            document.getElementById('charge_status_txt').innerText = "Attenzione: Scarica!";
+            document.getElementById('charge_100_txt').innerText = "---";
+            document.getElementById('charge_90_txt').innerText = "---";
+            document.getElementById('charge_80_txt').innerText = "---";
         }
 
         document.getElementById('tilt_txt').innerText = tilt + "°";
@@ -276,8 +295,9 @@
     }
 
     window.onload = () => {
-        document.getElementById('camper_name_input').value = camperName;
-        document.getElementById('camper-name-display').innerText = camperName.toUpperCase();
+        let savedName = localStorage.getItem('vibe_camper_name') || "IL MIO CAMPER";
+        document.getElementById('camper_name_input').value = savedName;
+        document.getElementById('camper-name-display').innerText = savedName.toUpperCase();
         goLive();
     };
 </script>
